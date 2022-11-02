@@ -1,0 +1,15 @@
+#                                                               --- full sequence ---- --- best 1 domain ---- --- domain number estimation ----
+# target name        accession  query name           accession    E-value  score  bias   E-value  score  bias   exp reg clu  ov env dom rep inc description of target
+#------------------- ---------- -------------------- ---------- --------- ------ ----- --------- ------ -----   --- --- --- --- --- --- --- --- ---------------------
+sp|P03694|TERL_BPT7  -          ELMAFIJE_00005       -              2e-73  252.7   0.2   5.5e-60  208.3   0.0   2.0   1   1   1   2   2   2   2 Terminase, large subunit OS=Escherichia phage T7 OX=10760 GN=19 PE=1 SV=1
+sp|P10310|TERL_BPT3  -          ELMAFIJE_00005       -            1.6e-72  249.7   0.1   1.6e-59  206.8   0.0   2.0   1   1   1   2   2   2   2 Terminase, large subunit OS=Enterobacteria phage T3 OX=10759 GN=19 PE=1 SV=1
+#
+# Program:         phmmer
+# Version:         3.3.2 (Nov 2020)
+# Pipeline mode:   SEARCH
+# Query file:      ./example.faa
+# Target file:     /home/viro/xue.peng/script/module_annotation/Vanno/databases/uniprot_sprot.fasta
+# Option settings: phmmer -o ./Vanno_opt/phrog/uniprot.phmmer.out --tblout ./Vanno_opt/phrog/uniprot.phmmer.tblout --noali -T 40 --cpu 1 ./example.faa /home/viro/xue.peng/script/module_annotation/Vanno/databases/uniprot_sprot.fasta 
+# Current dir:     /home/viro/xue.peng/script/module_annotation/Vanno/example
+# Date:            Wed Nov  2 20:38:58 2022
+# [ok]

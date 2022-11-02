@@ -1,0 +1,25 @@
+	index	uniprot_des	uniprot_acc	phrog_des	phrog_acc	phrog_annot	phrog_category	phrogID
+0	ELMAFIJE_00005	sp|P03694|TERL_BPT7	-	phrog_17672	-	terminase large subunit	head and packaging	phrog_17672
+1	ELMAFIJE_00014	NA	NA	phrog_11839	-	membrane protein	moron, auxiliary metabolic gene and host takeover	phrog_11839
+2	ELMAFIJE_00002	NA	NA	phrog_126	-	holin/anti-holin	lysis	phrog_126
+3	ELMAFIJE_00011	NA	NA	phrog_1448	-		unknown function	phrog_1448
+4	ELMAFIJE_00003	NA	NA	phrog_181	-	endolysin	lysis	phrog_181
+5	ELMAFIJE_00026	NA	NA	phrog_19	-	DnaB-like replicative helicase	DNA, RNA and nucleotide metabolism	phrog_19
+6	ELMAFIJE_00012	NA	NA	phrog_19151	-		unknown function	phrog_19151
+7	ELMAFIJE_00024	NA	NA	phrog_22173	-	DNA primase	DNA, RNA and nucleotide metabolism	phrog_22173
+8	ELMAFIJE_00010	NA	NA	phrog_2827	-		unknown function	phrog_2827
+9	ELMAFIJE_00022	NA	NA	phrog_2827	-		unknown function	phrog_2827
+10	ELMAFIJE_00023	NA	NA	phrog_2827	-		unknown function	phrog_2827
+11	ELMAFIJE_00009	NA	NA	phrog_4781	-		unknown function	phrog_4781
+12	ELMAFIJE_00013	NA	NA	phrog_6323	-		unknown function	phrog_6323
+13	ELMAFIJE_00018	NA	NA	phrog_6421	-		unknown function	phrog_6421
+14	ELMAFIJE_00007	NA	NA	phrog_6687	-		unknown function	phrog_6687
+15	ELMAFIJE_00017	NA	NA	phrog_6769	-		unknown function	phrog_6769
+16	ELMAFIJE_00025	NA	NA	phrog_7038	-		unknown function	phrog_7038
+17	ELMAFIJE_00020	NA	NA	phrog_7079	-		unknown function	phrog_7079
+18	ELMAFIJE_00015	NA	NA	phrog_7131	-		unknown function	phrog_7131
+19	ELMAFIJE_00019	NA	NA	phrog_7359	-		unknown function	phrog_7359
+20	ELMAFIJE_00021	NA	NA	phrog_7955	-		unknown function	phrog_7955
+21	ELMAFIJE_00006	NA	NA	phrog_8403	-	DNA binding protein	DNA, RNA and nucleotide metabolism	phrog_8403
+22	ELMAFIJE_00004	NA	NA	phrog_891	-	terminase small subunit	head and packaging	phrog_891
+23	ELMAFIJE_00016	NA	NA	phrog_9054	-		unknown function	phrog_9054

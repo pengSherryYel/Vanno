@@ -1,0 +1,15 @@
+using db_file: /home/viro/xue.peng/script/module_annotation/Vanno/databases/KEGG_profiles_prokaryotes.HMM
+using db_file: /home/viro/xue.peng/script/module_annotation/Vanno/databases/Pfam-A.hmm
+using db_file: /home/viro/xue.peng/script/module_annotation/Vanno/databases/VOGDB_phage.HMM
+using db_file: /home/viro/xue.peng/script/module_annotation/Vanno/databases/KEGG_profiles_prokaryotes.HMM
+using db_file: /home/viro/xue.peng/script/module_annotation/Vanno/databases/Pfam-A.hmm
+using db_file: /home/viro/xue.peng/script/module_annotation/Vanno/databases/VOGDB_phage.HMM
+using db_file: /home/viro/xue.peng/script/module_annotation/Vanno/databases/KEGG_profiles_prokaryotes.HMM
+using db_file: /home/viro/xue.peng/script/module_annotation/Vanno/databases/Pfam-A.hmm
+using db_file: /home/viro/xue.peng/script/module_annotation/Vanno/databases/VOGDB_phage.HMM
+using db_file: /home/viro/xue.peng/script/module_annotation/Vanno/databases/KEGG_profiles_prokaryotes.HMM
+using db_file: /home/viro/xue.peng/script/module_annotation/Vanno/databases/Pfam-A.hmm
+using db_file: /home/viro/xue.peng/script/module_annotation/Vanno/databases/VOGDB_phage.HMM
+using db_file: /home/viro/xue.peng/script/module_annotation/Vanno/databases/KEGG_profiles_prokaryotes.HMM
+using db_file: /home/viro/xue.peng/script/module_annotation/Vanno/databases/Pfam-A.hmm
+using db_file: /home/viro/xue.peng/script/module_annotation/Vanno/databases/VOGDB_phage.HMM

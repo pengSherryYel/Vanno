@@ -1,0 +1,753 @@
+# phmmer :: search a protein sequence against a protein database
+# HMMER 3.3.2 (Nov 2020); http://hmmer.org/
+# Copyright (C) 2020 Howard Hughes Medical Institute.
+# Freely distributed under the BSD open source license.
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# query sequence file:             ./example.faa
+# target sequence database:        /home/viro/xue.peng/script/module_annotation/Vanno/databases/uniprot_sprot.fasta
+# output directed to file:         ./Vanno_opt/phrog/uniprot.phmmer.out
+# per-seq hits tabular output:     ./Vanno_opt/phrog/uniprot.phmmer.tblout
+# show alignments in output:       no
+# sequence reporting threshold:    score >= 40
+# number of worker threads:        1
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Query:       ELMAFIJE_00001  [L=39]
+Description: hypothetical protein
+Scores for complete sequences (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Sequence Description
+    ------- ------ -----    ------- ------ -----   ---- --  -------- -----------
+
+   [No hits detected that satisfy reporting thresholds]
+
+
+Domain annotation for each sequence:
+
+   [No targets detected that satisfy reporting thresholds]
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query model(s):                            1  (39 nodes)
+Target sequences:                     568363  (205318884 residues searched)
+Passed MSV filter:                     13998  (0.0246286); expected 11367.3 (0.02)
+Passed bias filter:                    11056  (0.0194524); expected 11367.3 (0.02)
+Passed Vit filter:                       672  (0.00118234); expected 568.4 (0.001)
+Passed Fwd filter:                        17  (2.99105e-05); expected 5.7 (1e-05)
+Initial search space (Z):             568363  [actual number of targets]
+Domain search space  (domZ):               0  [number of targets reported over threshold]
+# CPU time: 2.12u 0.26s 00:00:02.38 Elapsed: 00:00:01.61
+# Mc/sec: 4950.92
+//
+Query:       ELMAFIJE_00002  [L=109]
+Description: holin/anti-holin
+Scores for complete sequences (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Sequence Description
+    ------- ------ -----    ------- ------ -----   ---- --  -------- -----------
+
+   [No hits detected that satisfy reporting thresholds]
+
+
+Domain annotation for each sequence:
+
+   [No targets detected that satisfy reporting thresholds]
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query model(s):                            1  (109 nodes)
+Target sequences:                     568363  (205318884 residues searched)
+Passed MSV filter:                     18845  (0.0331566); expected 11367.3 (0.02)
+Passed bias filter:                    12538  (0.0220598); expected 11367.3 (0.02)
+Passed Vit filter:                       718  (0.00126328); expected 568.4 (0.001)
+Passed Fwd filter:                        21  (3.69482e-05); expected 5.7 (1e-05)
+Initial search space (Z):             568363  [actual number of targets]
+Domain search space  (domZ):               0  [number of targets reported over threshold]
+# CPU time: 2.95u 0.12s 00:00:03.07 Elapsed: 00:00:01.88
+# Mc/sec: 11853.98
+//
+Query:       ELMAFIJE_00003  [L=185]
+Description: endolysin
+Scores for complete sequences (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Sequence Description
+    ------- ------ -----    ------- ------ -----   ---- --  -------- -----------
+
+   [No hits detected that satisfy reporting thresholds]
+
+
+Domain annotation for each sequence:
+
+   [No targets detected that satisfy reporting thresholds]
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query model(s):                            1  (185 nodes)
+Target sequences:                     568363  (205318884 residues searched)
+Passed MSV filter:                     14281  (0.0251265); expected 11367.3 (0.02)
+Passed bias filter:                    12619  (0.0222024); expected 11367.3 (0.02)
+Passed Vit filter:                       857  (0.00150784); expected 568.4 (0.001)
+Passed Fwd filter:                        73  (0.000128439); expected 5.7 (1e-05)
+Initial search space (Z):             568363  [actual number of targets]
+Domain search space  (domZ):               0  [number of targets reported over threshold]
+# CPU time: 2.76u 0.08s 00:00:02.84 Elapsed: 00:00:01.71
+# Mc/sec: 22160.24
+//
+Query:       ELMAFIJE_00004  [L=102]
+Description: terminase small subunit
+Scores for complete sequences (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Sequence Description
+    ------- ------ -----    ------- ------ -----   ---- --  -------- -----------
+
+   [No hits detected that satisfy reporting thresholds]
+
+
+Domain annotation for each sequence:
+
+   [No targets detected that satisfy reporting thresholds]
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query model(s):                            1  (102 nodes)
+Target sequences:                     568363  (205318884 residues searched)
+Passed MSV filter:                     18570  (0.0326728); expected 11367.3 (0.02)
+Passed bias filter:                    15105  (0.0265763); expected 11367.3 (0.02)
+Passed Vit filter:                      1187  (0.00208845); expected 568.4 (0.001)
+Passed Fwd filter:                        19  (3.34293e-05); expected 5.7 (1e-05)
+Initial search space (Z):             568363  [actual number of targets]
+Domain search space  (domZ):               0  [number of targets reported over threshold]
+# CPU time: 2.89u 0.09s 00:00:02.98 Elapsed: 00:00:01.78
+# Mc/sec: 11752.52
+//
+Query:       ELMAFIJE_00005  [L=645]
+Description: terminase large subunit
+Scores for complete sequences (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Sequence            Description
+    ------- ------ -----    ------- ------ -----   ---- --  --------            -----------
+      2e-73  252.7   0.2    5.5e-60  208.3   0.0    2.0  2  sp|P03694|TERL_BPT7  Terminase, large subunit OS=Escherichia 
+    1.6e-72  249.7   0.1    1.6e-59  206.8   0.0    2.0  2  sp|P10310|TERL_BPT3  Terminase, large subunit OS=Enterobacter
+
+
+Domain annotation for each sequence:
+>> sp|P03694|TERL_BPT7  Terminase, large subunit OS=Escherichia phage T7 OX=10760 GN=19 PE=1 SV=1
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+ ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+   1 !  208.3   0.0   1.9e-65   5.5e-60      63     460 ..      37     428 ..       8     438 .. 0.90
+   2 !   42.6   0.1   2.8e-15     8e-10     509     596 ..     446     533 ..     428     555 .. 0.85
+
+>> sp|P10310|TERL_BPT3  Terminase, large subunit OS=Enterobacteria phage T3 OX=10759 GN=19 PE=1 SV=1
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+ ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+   1 !  206.8   0.0   5.6e-65   1.6e-59      63     460 ..      37     428 ..       8     446 .. 0.89
+   2 !   41.1   0.1   8.1e-15   2.3e-09     510     605 ..     447     538 ..     437     560 .. 0.82
+
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query model(s):                            1  (645 nodes)
+Target sequences:                     568363  (205318884 residues searched)
+Passed MSV filter:                     12353  (0.0217343); expected 11367.3 (0.02)
+Passed bias filter:                    10324  (0.0181644); expected 11367.3 (0.02)
+Passed Vit filter:                       827  (0.00145506); expected 568.4 (0.001)
+Passed Fwd filter:                        20  (3.51888e-05); expected 5.7 (1e-05)
+Initial search space (Z):             568363  [actual number of targets]
+Domain search space  (domZ):               2  [number of targets reported over threshold]
+# CPU time: 6.53u 0.13s 00:00:06.66 Elapsed: 00:00:04.85
+# Mc/sec: 27301.78
+//
+Query:       ELMAFIJE_00006  [L=45]
+Description: DNA binding protein
+Scores for complete sequences (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Sequence Description
+    ------- ------ -----    ------- ------ -----   ---- --  -------- -----------
+
+   [No hits detected that satisfy reporting thresholds]
+
+
+Domain annotation for each sequence:
+
+   [No targets detected that satisfy reporting thresholds]
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query model(s):                            1  (45 nodes)
+Target sequences:                     568363  (205318884 residues searched)
+Passed MSV filter:                     13935  (0.0245178); expected 11367.3 (0.02)
+Passed bias filter:                    11264  (0.0198183); expected 11367.3 (0.02)
+Passed Vit filter:                       551  (0.000969451); expected 568.4 (0.001)
+Passed Fwd filter:                         3  (5.27832e-06); expected 5.7 (1e-05)
+Initial search space (Z):             568363  [actual number of targets]
+Domain search space  (domZ):               0  [number of targets reported over threshold]
+# CPU time: 2.43u 0.09s 00:00:02.52 Elapsed: 00:00:01.69
+# Mc/sec: 5447.86
+//
+Query:       ELMAFIJE_00007  [L=67]
+Description: hypothetical protein
+Scores for complete sequences (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Sequence Description
+    ------- ------ -----    ------- ------ -----   ---- --  -------- -----------
+
+   [No hits detected that satisfy reporting thresholds]
+
+
+Domain annotation for each sequence:
+
+   [No targets detected that satisfy reporting thresholds]
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query model(s):                            1  (67 nodes)
+Target sequences:                     568363  (205318884 residues searched)
+Passed MSV filter:                     16767  (0.0295005); expected 11367.3 (0.02)
+Passed bias filter:                    13171  (0.0231736); expected 11367.3 (0.02)
+Passed Vit filter:                       710  (0.0012492); expected 568.4 (0.001)
+Passed Fwd filter:                         0  (0); expected 5.7 (1e-05)
+Initial search space (Z):             568363  [actual number of targets]
+Domain search space  (domZ):               0  [number of targets reported over threshold]
+# CPU time: 2.64u 0.08s 00:00:02.72 Elapsed: 00:00:01.73
+# Mc/sec: 7949.30
+//
+Query:       ELMAFIJE_00008  [L=39]
+Description: hypothetical protein
+Scores for complete sequences (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Sequence Description
+    ------- ------ -----    ------- ------ -----   ---- --  -------- -----------
+
+   [No hits detected that satisfy reporting thresholds]
+
+
+Domain annotation for each sequence:
+
+   [No targets detected that satisfy reporting thresholds]
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query model(s):                            1  (39 nodes)
+Target sequences:                     568363  (205318884 residues searched)
+Passed MSV filter:                     14673  (0.0258162); expected 11367.3 (0.02)
+Passed bias filter:                    12341  (0.0217132); expected 11367.3 (0.02)
+Passed Vit filter:                       895  (0.0015747); expected 568.4 (0.001)
+Passed Fwd filter:                        10  (1.75944e-05); expected 5.7 (1e-05)
+Initial search space (Z):             568363  [actual number of targets]
+Domain search space  (domZ):               0  [number of targets reported over threshold]
+# CPU time: 1.80u 0.08s 00:00:01.88 Elapsed: 00:00:01.20
+# Mc/sec: 6640.96
+//
+Query:       ELMAFIJE_00009  [L=71]
+Description: hypothetical protein
+Scores for complete sequences (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Sequence Description
+    ------- ------ -----    ------- ------ -----   ---- --  -------- -----------
+
+   [No hits detected that satisfy reporting thresholds]
+
+
+Domain annotation for each sequence:
+
+   [No targets detected that satisfy reporting thresholds]
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query model(s):                            1  (71 nodes)
+Target sequences:                     568363  (205318884 residues searched)
+Passed MSV filter:                     11504  (0.0202406); expected 11367.3 (0.02)
+Passed bias filter:                    10936  (0.0192412); expected 11367.3 (0.02)
+Passed Vit filter:                       694  (0.00122105); expected 568.4 (0.001)
+Passed Fwd filter:                         7  (1.23161e-05); expected 5.7 (1e-05)
+Initial search space (Z):             568363  [actual number of targets]
+Domain search space  (domZ):               0  [number of targets reported over threshold]
+# CPU time: 2.62u 0.08s 00:00:02.70 Elapsed: 00:00:01.75
+# Mc/sec: 8292.47
+//
+Query:       ELMAFIJE_00010  [L=156]
+Description: hypothetical protein
+Scores for complete sequences (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Sequence Description
+    ------- ------ -----    ------- ------ -----   ---- --  -------- -----------
+
+   [No hits detected that satisfy reporting thresholds]
+
+
+Domain annotation for each sequence:
+
+   [No targets detected that satisfy reporting thresholds]
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query model(s):                            1  (156 nodes)
+Target sequences:                     568363  (205318884 residues searched)
+Passed MSV filter:                     12952  (0.0227883); expected 11367.3 (0.02)
+Passed bias filter:                    11370  (0.0200048); expected 11367.3 (0.02)
+Passed Vit filter:                       788  (0.00138644); expected 568.4 (0.001)
+Passed Fwd filter:                        33  (5.80615e-05); expected 5.7 (1e-05)
+Initial search space (Z):             568363  [actual number of targets]
+Domain search space  (domZ):               0  [number of targets reported over threshold]
+# CPU time: 2.84u 0.09s 00:00:02.93 Elapsed: 00:00:01.71
+# Mc/sec: 18695.39
+//
+Query:       ELMAFIJE_00011  [L=169]
+Description: hypothetical protein
+Scores for complete sequences (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Sequence Description
+    ------- ------ -----    ------- ------ -----   ---- --  -------- -----------
+
+   [No hits detected that satisfy reporting thresholds]
+
+
+Domain annotation for each sequence:
+
+   [No targets detected that satisfy reporting thresholds]
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query model(s):                            1  (169 nodes)
+Target sequences:                     568363  (205318884 residues searched)
+Passed MSV filter:                     14459  (0.0254397); expected 11367.3 (0.02)
+Passed bias filter:                    11783  (0.0207315); expected 11367.3 (0.02)
+Passed Vit filter:                       782  (0.00137588); expected 568.4 (0.001)
+Passed Fwd filter:                         3  (5.27832e-06); expected 5.7 (1e-05)
+Initial search space (Z):             568363  [actual number of targets]
+Domain search space  (domZ):               0  [number of targets reported over threshold]
+# CPU time: 3.21u 0.08s 00:00:03.29 Elapsed: 00:00:01.92
+# Mc/sec: 18046.80
+//
+Query:       ELMAFIJE_00012  [L=91]
+Description: hypothetical protein
+Scores for complete sequences (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Sequence Description
+    ------- ------ -----    ------- ------ -----   ---- --  -------- -----------
+
+   [No hits detected that satisfy reporting thresholds]
+
+
+Domain annotation for each sequence:
+
+   [No targets detected that satisfy reporting thresholds]
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query model(s):                            1  (91 nodes)
+Target sequences:                     568363  (205318884 residues searched)
+Passed MSV filter:                     13822  (0.024319); expected 11367.3 (0.02)
+Passed bias filter:                    12703  (0.0223502); expected 11367.3 (0.02)
+Passed Vit filter:                       980  (0.00172425); expected 568.4 (0.001)
+Passed Fwd filter:                        11  (1.93538e-05); expected 5.7 (1e-05)
+Initial search space (Z):             568363  [actual number of targets]
+Domain search space  (domZ):               0  [number of targets reported over threshold]
+# CPU time: 2.66u 0.09s 00:00:02.75 Elapsed: 00:00:01.74
+# Mc/sec: 10679.10
+//
+Query:       ELMAFIJE_00013  [L=124]
+Description: hypothetical protein
+Scores for complete sequences (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Sequence Description
+    ------- ------ -----    ------- ------ -----   ---- --  -------- -----------
+
+   [No hits detected that satisfy reporting thresholds]
+
+
+Domain annotation for each sequence:
+
+   [No targets detected that satisfy reporting thresholds]
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query model(s):                            1  (124 nodes)
+Target sequences:                     568363  (205318884 residues searched)
+Passed MSV filter:                     13849  (0.0243665); expected 11367.3 (0.02)
+Passed bias filter:                    12806  (0.0225314); expected 11367.3 (0.02)
+Passed Vit filter:                       749  (0.00131782); expected 568.4 (0.001)
+Passed Fwd filter:                         7  (1.23161e-05); expected 5.7 (1e-05)
+Initial search space (Z):             568363  [actual number of targets]
+Domain search space  (domZ):               0  [number of targets reported over threshold]
+# CPU time: 2.24u 0.09s 00:00:02.33 Elapsed: 00:00:01.37
+# Mc/sec: 18487.51
+//
+Query:       ELMAFIJE_00014  [L=32]
+Description: membrane protein
+Scores for complete sequences (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Sequence Description
+    ------- ------ -----    ------- ------ -----   ---- --  -------- -----------
+
+   [No hits detected that satisfy reporting thresholds]
+
+
+Domain annotation for each sequence:
+
+   [No targets detected that satisfy reporting thresholds]
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query model(s):                            1  (32 nodes)
+Target sequences:                     568363  (205318884 residues searched)
+Passed MSV filter:                     15106  (0.0265781); expected 11367.3 (0.02)
+Passed bias filter:                    11524  (0.0202758); expected 11367.3 (0.02)
+Passed Vit filter:                       616  (0.00108381); expected 568.4 (0.001)
+Passed Fwd filter:                        18  (3.16699e-05); expected 5.7 (1e-05)
+Initial search space (Z):             568363  [actual number of targets]
+Domain search space  (domZ):               0  [number of targets reported over threshold]
+# CPU time: 2.08u 0.09s 00:00:02.17 Elapsed: 00:00:01.46
+# Mc/sec: 4476.35
+//
+Query:       ELMAFIJE_00015  [L=198]
+Description: hypothetical protein
+Scores for complete sequences (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Sequence Description
+    ------- ------ -----    ------- ------ -----   ---- --  -------- -----------
+
+   [No hits detected that satisfy reporting thresholds]
+
+
+Domain annotation for each sequence:
+
+   [No targets detected that satisfy reporting thresholds]
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query model(s):                            1  (198 nodes)
+Target sequences:                     568363  (205318884 residues searched)
+Passed MSV filter:                     10080  (0.0177351); expected 11367.3 (0.02)
+Passed bias filter:                     9058  (0.015937); expected 11367.3 (0.02)
+Passed Vit filter:                       511  (0.000899073); expected 568.4 (0.001)
+Passed Fwd filter:                         3  (5.27832e-06); expected 5.7 (1e-05)
+Initial search space (Z):             568363  [actual number of targets]
+Domain search space  (domZ):               0  [number of targets reported over threshold]
+# CPU time: 3.07u 0.09s 00:00:03.15 Elapsed: 00:00:01.81
+# Mc/sec: 22427.94
+//
+Query:       ELMAFIJE_00016  [L=34]
+Description: hypothetical protein
+Scores for complete sequences (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Sequence Description
+    ------- ------ -----    ------- ------ -----   ---- --  -------- -----------
+
+   [No hits detected that satisfy reporting thresholds]
+
+
+Domain annotation for each sequence:
+
+   [No targets detected that satisfy reporting thresholds]
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query model(s):                            1  (34 nodes)
+Target sequences:                     568363  (205318884 residues searched)
+Passed MSV filter:                     10895  (0.0191691); expected 11367.3 (0.02)
+Passed bias filter:                    10179  (0.0179093); expected 11367.3 (0.02)
+Passed Vit filter:                       538  (0.000946578); expected 568.4 (0.001)
+Passed Fwd filter:                         3  (5.27832e-06); expected 5.7 (1e-05)
+Initial search space (Z):             568363  [actual number of targets]
+Domain search space  (domZ):               0  [number of targets reported over threshold]
+# CPU time: 2.09u 0.08s 00:00:02.17 Elapsed: 00:00:01.45
+# Mc/sec: 4789.68
+//
+Query:       ELMAFIJE_00017  [L=132]
+Description: hypothetical protein
+Scores for complete sequences (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Sequence Description
+    ------- ------ -----    ------- ------ -----   ---- --  -------- -----------
+
+   [No hits detected that satisfy reporting thresholds]
+
+
+Domain annotation for each sequence:
+
+   [No targets detected that satisfy reporting thresholds]
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query model(s):                            1  (132 nodes)
+Target sequences:                     568363  (205318884 residues searched)
+Passed MSV filter:                     11786  (0.0207367); expected 11367.3 (0.02)
+Passed bias filter:                    10974  (0.0193081); expected 11367.3 (0.02)
+Passed Vit filter:                       656  (0.00115419); expected 568.4 (0.001)
+Passed Fwd filter:                         5  (8.79719e-06); expected 5.7 (1e-05)
+Initial search space (Z):             568363  [actual number of targets]
+Domain search space  (domZ):               0  [number of targets reported over threshold]
+# CPU time: 2.84u 0.08s 00:00:02.92 Elapsed: 00:00:01.74
+# Mc/sec: 15539.51
+//
+Query:       ELMAFIJE_00018  [L=162]
+Description: hypothetical protein
+Scores for complete sequences (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Sequence Description
+    ------- ------ -----    ------- ------ -----   ---- --  -------- -----------
+
+   [No hits detected that satisfy reporting thresholds]
+
+
+Domain annotation for each sequence:
+
+   [No targets detected that satisfy reporting thresholds]
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query model(s):                            1  (162 nodes)
+Target sequences:                     568363  (205318884 residues searched)
+Passed MSV filter:                     12692  (0.0223308); expected 11367.3 (0.02)
+Passed bias filter:                    11738  (0.0206523); expected 11367.3 (0.02)
+Passed Vit filter:                       626  (0.00110141); expected 568.4 (0.001)
+Passed Fwd filter:                         1  (1.75944e-06); expected 5.7 (1e-05)
+Initial search space (Z):             568363  [actual number of targets]
+Domain search space  (domZ):               0  [number of targets reported over threshold]
+# CPU time: 2.97u 0.09s 00:00:03.06 Elapsed: 00:00:01.76
+# Mc/sec: 18834.01
+//
+Query:       ELMAFIJE_00019  [L=145]
+Description: hypothetical protein
+Scores for complete sequences (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Sequence Description
+    ------- ------ -----    ------- ------ -----   ---- --  -------- -----------
+
+   [No hits detected that satisfy reporting thresholds]
+
+
+Domain annotation for each sequence:
+
+   [No targets detected that satisfy reporting thresholds]
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query model(s):                            1  (145 nodes)
+Target sequences:                     568363  (205318884 residues searched)
+Passed MSV filter:                     13379  (0.0235395); expected 11367.3 (0.02)
+Passed bias filter:                    11528  (0.0202828); expected 11367.3 (0.02)
+Passed Vit filter:                       667  (0.00117355); expected 568.4 (0.001)
+Passed Fwd filter:                         5  (8.79719e-06); expected 5.7 (1e-05)
+Initial search space (Z):             568363  [actual number of targets]
+Domain search space  (domZ):               0  [number of targets reported over threshold]
+# CPU time: 2.69u 0.09s 00:00:02.78 Elapsed: 00:00:01.62
+# Mc/sec: 18277.14
+//
+Query:       ELMAFIJE_00020  [L=55]
+Description: hypothetical protein
+Scores for complete sequences (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Sequence Description
+    ------- ------ -----    ------- ------ -----   ---- --  -------- -----------
+
+   [No hits detected that satisfy reporting thresholds]
+
+
+Domain annotation for each sequence:
+
+   [No targets detected that satisfy reporting thresholds]
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query model(s):                            1  (55 nodes)
+Target sequences:                     568363  (205318884 residues searched)
+Passed MSV filter:                     30017  (0.0528131); expected 11367.3 (0.02)
+Passed bias filter:                    16899  (0.0297328); expected 11367.3 (0.02)
+Passed Vit filter:                      1229  (0.00216235); expected 568.4 (0.001)
+Passed Fwd filter:                        49  (8.62125e-05); expected 5.7 (1e-05)
+Initial search space (Z):             568363  [actual number of targets]
+Domain search space  (domZ):               0  [number of targets reported over threshold]
+# CPU time: 2.18u 0.09s 00:00:02.27 Elapsed: 00:00:01.39
+# Mc/sec: 8082.48
+//
+Query:       ELMAFIJE_00021  [L=62]
+Description: hypothetical protein
+Scores for complete sequences (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Sequence Description
+    ------- ------ -----    ------- ------ -----   ---- --  -------- -----------
+
+   [No hits detected that satisfy reporting thresholds]
+
+
+Domain annotation for each sequence:
+
+   [No targets detected that satisfy reporting thresholds]
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query model(s):                            1  (62 nodes)
+Target sequences:                     568363  (205318884 residues searched)
+Passed MSV filter:                     13534  (0.0238122); expected 11367.3 (0.02)
+Passed bias filter:                    12390  (0.0217994); expected 11367.3 (0.02)
+Passed Vit filter:                       849  (0.00149376); expected 568.4 (0.001)
+Passed Fwd filter:                         8  (1.40755e-05); expected 5.7 (1e-05)
+Initial search space (Z):             568363  [actual number of targets]
+Domain search space  (domZ):               0  [number of targets reported over threshold]
+# CPU time: 2.04u 0.08s 00:00:02.12 Elapsed: 00:00:01.38
+# Mc/sec: 9185.04
+//
+Query:       ELMAFIJE_00022  [L=76]
+Description: hypothetical protein
+Scores for complete sequences (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Sequence Description
+    ------- ------ -----    ------- ------ -----   ---- --  -------- -----------
+
+   [No hits detected that satisfy reporting thresholds]
+
+
+Domain annotation for each sequence:
+
+   [No targets detected that satisfy reporting thresholds]
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query model(s):                            1  (76 nodes)
+Target sequences:                     568363  (205318884 residues searched)
+Passed MSV filter:                     10949  (0.0192641); expected 11367.3 (0.02)
+Passed bias filter:                     9989  (0.017575); expected 11367.3 (0.02)
+Passed Vit filter:                       461  (0.000811101); expected 568.4 (0.001)
+Passed Fwd filter:                         1  (1.75944e-06); expected 5.7 (1e-05)
+Initial search space (Z):             568363  [actual number of targets]
+Domain search space  (domZ):               0  [number of targets reported over threshold]
+# CPU time: 1.90u 0.09s 00:00:01.99 Elapsed: 00:00:01.24
+# Mc/sec: 12577.72
+//
+Query:       ELMAFIJE_00023  [L=74]
+Description: hypothetical protein
+Scores for complete sequences (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Sequence Description
+    ------- ------ -----    ------- ------ -----   ---- --  -------- -----------
+
+   [No hits detected that satisfy reporting thresholds]
+
+
+Domain annotation for each sequence:
+
+   [No targets detected that satisfy reporting thresholds]
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query model(s):                            1  (74 nodes)
+Target sequences:                     568363  (205318884 residues searched)
+Passed MSV filter:                     10543  (0.0185498); expected 11367.3 (0.02)
+Passed bias filter:                     9869  (0.0173639); expected 11367.3 (0.02)
+Passed Vit filter:                       465  (0.000818139); expected 568.4 (0.001)
+Passed Fwd filter:                        10  (1.75944e-05); expected 5.7 (1e-05)
+Initial search space (Z):             568363  [actual number of targets]
+Domain search space  (domZ):               0  [number of targets reported over threshold]
+# CPU time: 1.89u 0.08s 00:00:01.97 Elapsed: 00:00:01.22
+# Mc/sec: 12386.86
+//
+Query:       ELMAFIJE_00024  [L=266]
+Description: DNA primase
+Scores for complete sequences (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Sequence Description
+    ------- ------ -----    ------- ------ -----   ---- --  -------- -----------
+
+   [No hits detected that satisfy reporting thresholds]
+
+
+Domain annotation for each sequence:
+
+   [No targets detected that satisfy reporting thresholds]
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query model(s):                            1  (266 nodes)
+Target sequences:                     568363  (205318884 residues searched)
+Passed MSV filter:                     13157  (0.0231489); expected 11367.3 (0.02)
+Passed bias filter:                    11776  (0.0207192); expected 11367.3 (0.02)
+Passed Vit filter:                       817  (0.00143746); expected 568.4 (0.001)
+Passed Fwd filter:                        31  (5.45426e-05); expected 5.7 (1e-05)
+Initial search space (Z):             568363  [actual number of targets]
+Domain search space  (domZ):               0  [number of targets reported over threshold]
+# CPU time: 4.03u 0.13s 00:00:04.16 Elapsed: 00:00:02.56
+# Mc/sec: 21305.24
+//
+Query:       ELMAFIJE_00025  [L=80]
+Description: hypothetical protein
+Scores for complete sequences (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Sequence Description
+    ------- ------ -----    ------- ------ -----   ---- --  -------- -----------
+
+   [No hits detected that satisfy reporting thresholds]
+
+
+Domain annotation for each sequence:
+
+   [No targets detected that satisfy reporting thresholds]
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query model(s):                            1  (80 nodes)
+Target sequences:                     568363  (205318884 residues searched)
+Passed MSV filter:                      9897  (0.0174132); expected 11367.3 (0.02)
+Passed bias filter:                     8817  (0.015513); expected 11367.3 (0.02)
+Passed Vit filter:                       525  (0.000923705); expected 568.4 (0.001)
+Passed Fwd filter:                         1  (1.75944e-06); expected 5.7 (1e-05)
+Initial search space (Z):             568363  [actual number of targets]
+Domain search space  (domZ):               0  [number of targets reported over threshold]
+# CPU time: 1.93u 0.07s 00:00:02.00 Elapsed: 00:00:01.23
+# Mc/sec: 13274.42
+//
+Query:       ELMAFIJE_00026  [L=432]
+Description: DnaB-like replicative helicase
+Scores for complete sequences (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Sequence Description
+    ------- ------ -----    ------- ------ -----   ---- --  -------- -----------
+
+   [No hits detected that satisfy reporting thresholds]
+
+
+Domain annotation for each sequence:
+
+   [No targets detected that satisfy reporting thresholds]
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query model(s):                            1  (432 nodes)
+Target sequences:                     568363  (205318884 residues searched)
+Passed MSV filter:                     17277  (0.0303978); expected 11367.3 (0.02)
+Passed bias filter:                    15066  (0.0265077); expected 11367.3 (0.02)
+Passed Vit filter:                       982  (0.00172777); expected 568.4 (0.001)
+Passed Fwd filter:                        13  (2.28727e-05); expected 5.7 (1e-05)
+Initial search space (Z):             568363  [actual number of targets]
+Domain search space  (domZ):               0  [number of targets reported over threshold]
+# CPU time: 5.08u 0.10s 00:00:05.18 Elapsed: 00:00:03.63
+# Mc/sec: 24406.96
+//
+[ok]
