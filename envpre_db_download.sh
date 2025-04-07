@@ -95,12 +95,25 @@ function download_uniprot_seq(){
         wget https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.fasta.gz
         wget https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.dat.gz
         gunzip uniprot_sprot.fasta.gz uniprot_sprot.dat.gz
-    elif [$version == "all" || $version == "trembl" ];then
+    elif [ $version == "all" || $version == "trembl" ];then
         wget https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_trembl.fasta.gz
         wget https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_trembl.dat.gz
         gunzip uniprot_trembl.fasta.gz uniprot_trembl.dat.gz
+    elif [ $version == "all" ];then
+        cat uniprot_sprot.fasta uniprot_trembl.fasta >uniprot_trembl_sprot.merge.fasta
     fi
 }
+
+function download_pdb_seq(){
+    version=${1:-""}
+    db_dir=${2:-'.'}
+
+    mkdir -p $db_dir/pdb && cd $db_dir/pdb
+    wget https://ftp.wwpdb.org/pub/pdb/derived_data/pdb_seqres.txt.gz
+    gunzip pdb_seqres.txt.gz
+    grep \> pdb_seqres.txt |cut -d " " -f 1,4-200|sed 's/>//g' |sed 's/  /\t/' >pdb_seqres.header.anno.txt
+}
+
 ##########################
 ## main ##
 ##########################

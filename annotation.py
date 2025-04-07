@@ -23,12 +23,12 @@ anno = argparse.ArgumentParser(description="function annotation for virus. curre
 anno.add_argument('--version', action='version', version='Vanno v1.1')
 
 ##require
-anno.add_argument('-i', type=str, nargs=1, required=True, help='input faa file')
+anno.add_argument('-i', type=str, required=True, help='input faa file')
 
 ##optional
-anno.add_argument('-o', type=str, nargs=1, default="./Vanno_opt",
+anno.add_argument('-o', type=str, default="./Vanno_opt",
                   help="path to deposit output folder and temporary files, will create if doesn't exist [default= working directory]")
-anno.add_argument('-t', type=int, nargs=1, default='6',
+anno.add_argument('-t', type=int, default='6',
                   help='number of threads, each occupies 1 CPU [default=1, max of 1 CPU per scaffold]')
 #anno.add_argument('-virome', action='store_true',
 #                  help='use this setting if dataset is known to be comprised mainly of viruses. More sensitive to viruses, less sensitive to false identifications [default=off]')
@@ -53,9 +53,14 @@ anno.add_argument('-r', '--phrog',action='store_true',dest="phrog",default=False
 anno.add_argument('-rc', '--phrogC',type=float, default="1e-5", dest="rc", help="phrog creteria. discard the not meet this creteria")
 anno.add_argument('-rf', '--phrogF',action='store_true',dest="rf",default=False, help="force rerun phrog")
 
-anno.add_argument('-u', '--uniprot',action='store_true',dest="uniprot",default=False, help="run uniprot")
+anno.add_argument('-u', '--uniprot',action='store_true',dest="uniprot",default=False, help="run uniprot(default swiss-prot)")
+anno.add_argument('-ud', '--uniprotDB',choices=['sprot', 'trembl', 'all'],default="sprot", help="run uniprot using sprot(swiss-prot); trembl  or all (sprot+trembl)")
 anno.add_argument('-uc', '--uniprotC',type=float, default="1e-5", dest="uc", help="uniprot creteria. discard the not meet this creteria")
 anno.add_argument('-uf', '--uniprotF',action='store_true',dest="uf",default=False, help="force rerun uniprot")
+
+anno.add_argument('-b', '--pdb',action='store_true',dest="pdb",default=False, help="run pdb")
+anno.add_argument('-bc', '--pdbC',type=float, default="1e-5", dest="bc", help="pdb creteria. discard the not meet this creteria")
+anno.add_argument('-bf', '--pdbF',action='store_true',dest="bf",default=False, help="force rerun pdb")
 
 #anno.add_argument('-l',type=str, nargs=1, default='1000',
 #                  help='length in basepairs to limit input sequences [default=1000, can increase but not decrease]')
@@ -65,14 +70,15 @@ anno.add_argument('-uf', '--uniprotF',action='store_true',dest="uf",default=Fals
 
 args = anno.parse_args()
 thread=args.t
-input_faa=args.i[0]
+input_faa=args.i
 outputD = args.o
 print("Results will be store at %s"%outputD)
-logging.basicConfig(filename=os.path.join(str(outputD)+'anno.log'), level=logging.INFO, format='%(message)s')
 
 ## perpare the dir
 if not os.path.exists(str(outputD)):
-    Popen('mkdir -P ' + str(outputD) + ' 2>/dev/null', shell=True)
+    Popen('mkdir -p ' + str(outputD) + ' 2>/dev/null', shell=True)
+    print('mkdir -p', str(outputD))
+logging.basicConfig(filename=os.path.join(str(outputD)+'anno.log'), level=logging.INFO, format='%(message)s')
 
 ## check database file
 databases=args.d
@@ -81,7 +87,19 @@ pfam_db=os.path.join(databases,"Pfam-A.hmm")
 vog_db=os.path.join(databases,"VOGDB_phage.HMM")
 phrog_db=os.path.join(databases,"all_phrogs.hmm")
 phrog_db_anno=os.path.join(databases,"phrog_annot.tsv")
-uniprot_db=os.path.join(databases,"uniprot_sprot.fasta")
+
+if args.uniprotDB == "sprot":
+    uniprot_db=os.path.join(databases,"uniprot_sprot.fasta")
+elif args.uniprotDB == "trembl":
+    uniprot_db=os.path.join(databases,"uniprot_trembl.fasta")
+elif args.uniprotDB == "all":
+    uniprot_db=os.path.join(databases,"uniprot_trembl_sprot.merge.fasta")
+else:
+    print("Wrong parameter")
+
+pdb_db=os.path.join(databases,"pdb_seqres.txt")
+pdb_db_anno=os.path.join(databases,"pdb_seqres.header.anno.txt")
+
 
 def checkdb(db_file):
     if not os.path.exists(db_file):
@@ -93,6 +111,9 @@ def checkdb(db_file):
 checkdb(kegg_db)
 checkdb(pfam_db)
 checkdb(vog_db)
+checkdb(phrog_db)
+checkdb(pdb_db)
+
 
 ## run hmmer to annotation
 thread = args.t
@@ -316,7 +337,7 @@ if args.phrog:
     phrogt = Thread(target=oneStepRun,args=argsL, kwargs=kwargsD)
     phrogt.start()
 
-###########################  Run/Parse Uniprot(Swiss-prot) hmmsearch ##########################
+###########################  Run/Parse Uniprot(Swiss-prot) phmmer ##########################
 if args.uniprot:
     uniprotOptD=os.path.join(outputD,"uniprot")
     argsL = [input_faa, "uniprot", uniprotOptD, uniprot_db, outD]
@@ -327,6 +348,16 @@ if args.uniprot:
     uniprott = Thread(target=oneStepRun,args=argsL, kwargs=kwargsD)
     uniprott.start()
 
+###########################  Run/Parse Uniprot(Swiss-prot) phmmer ##########################
+if args.pdb:
+    pdbOptD=os.path.join(outputD,"pdb")
+    argsL = [input_faa, "pdb", pdbOptD, pdb_db, outD]
+    kwargsD = {"otherPara":"-T 40 --cpu %s"%(thread),
+               "creteria":args.bc,
+               "force":args.bf,
+               "program":"phmmer"}
+    pdbt = Thread(target=oneStepRun,args=argsL, kwargs=kwargsD)
+    pdbt.start()
 
 ###########################
 #### fetch result #########
@@ -346,6 +377,9 @@ if args.phrog:
 if args.uniprot:
     uniprott.join()
 
+if args.pdb:
+    pdbt.join()
+
 summaryFile = os.path.join(outputD,"Vanno_summary.tsv")
 fmt_outD = split_dict_for_pandas(outD)
 res_df = pd.DataFrame.from_dict(fmt_outD)
@@ -353,10 +387,16 @@ res_df = res_df.fillna("NA")
 print(res_df)
 
 ## add phrog annotation
-phrog_db_anno_df = pd.read_csv(phrog_db_anno,sep="\t",names=["phrog_ori","color","phrog_annot","phrog_category"])
-phrog_db_anno_df["phrogID"] = ["phrog_%s"%i for i in phrog_db_anno_df.phrog_ori]
-phrog_db_anno_df_sub = phrog_db_anno_df.loc[:,["phrog_annot","phrog_category","phrogID"]]
-res_df = res_df.reset_index().merge(phrog_db_anno_df_sub,left_on="phrog_des",right_on="phrogID",how="left")
+if args.phrog:
+    phrog_db_anno_df = pd.read_csv(phrog_db_anno,sep="\t",names=["phrog_ori","color","phrog_annot","phrog_category"])
+    phrog_db_anno_df["phrogID"] = ["phrog_%s"%i for i in phrog_db_anno_df.phrog_ori]
+    phrog_db_anno_df_sub = phrog_db_anno_df.loc[:,["phrog_annot","phrog_category","phrogID"]]
+    res_df = res_df.reset_index().merge(phrog_db_anno_df_sub,left_on="phrog_des",right_on="phrogID",how="left")
+
+## add pdb annotation
+if args.pdb:
+    pdb_db_anno_df = pd.read_csv(pdb_db_anno,sep="\t",names=["pdb_id","pdb_annot"])
+    res_df = res_df.merge(pdb_db_anno_df,left_on="pdb_des",right_on="pdb_id",how="left")
 
 ## select coloumn to save
 res_df.to_csv(summaryFile,index=True,sep="\t")
