@@ -44,3 +44,22 @@ optional arguments:
                         uniprot creteria. discard the not meet this creteria
   -uf, --uniprotF       force rerun uniprot
 ```
+
+## Input & Output
+
+### Input
+amino acid sequences
+
+## Output
+Main output: Vanno_summary.tsv. It merge all the annotation results. Please check the example file example/Vanno_opt/Vanno_summary.tsv
+
+These folder will store the results of each db.
+* kegg
+* pfam
+* phrog
+* uniprot
+* vog
+
+
+## Example
+For more detail, please check the example in example folder.
