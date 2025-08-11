@@ -8,6 +8,7 @@ kegg_version=${2:-'2022-02-01'}
 vog_version=${3:-'latest'}
 pfam_version=${4:-'Pfam35.0'}
 uniprot_version=${5:-"sprot"} ## sprot(swissprot), trembl, all(both)
+phrog_version=${6:-"v3"}
 ################################
 
 mkdir -p $db_dir
@@ -71,7 +72,7 @@ function download_pfam_hmm(){
 
 ## PHROG db
 function download_phrog_hmm(){
-    version=${1:-'Pfam35.0'}
+    version=${1:-'v3'}
     db_dir=${2:-'.'}
 
     mkdir -p $db_dir/PHROG/$version && cd $db_dir/PHROG/$version
@@ -80,7 +81,7 @@ function download_phrog_hmm(){
     wget http://s3.climb.ac.uk/ADM_share/all_phrogs.hmm.gz
     ## offical website HMM is provied hhm file, which is used for hhsearch
     #wget https://phrogs.lmge.uca.fr/downloads_from_website/HMM_phrog.tar.gz
-    wget https://phrogs.lmge.uca.fr/downloads_from_website/phrog_annot_v3.tsv
+    wget https://phrogs.lmge.uca.fr/downloads_from_website/phrog_annot_$version.tsv
     gunzip all_phrogs.hmm.gz
     ln -s `pwd`/all_phrogs.hmm ..
     cd - && echo "PHROG done"
@@ -121,3 +122,4 @@ download_kegg_hmm $kegg_version $db_dir
 download_vog_hmm $vog_version $db_dir
 download_pfam_hmm $pfam_versiom $db_dir
 download_uniprot_seq $uniprot_version $db_dir
+download_phrog_hmm $phrog_version $db_dir
