@@ -7,8 +7,11 @@ db_dir=${1:-"./databases"}
 kegg_version=${2:-'2022-02-01'}
 vog_version=${3:-'latest'}
 pfam_version=${4:-'Pfam35.0'}
-uniprot_version=${5:-"sprot"} ## sprot(swissprot), trembl, all(both)
-phrog_version=${6:-"v3"}
+phrog_version_hmm=${5:-"v4"}
+phrog_version_mmseqs=${6:-"v4"}
+
+# uniprot_version=${5:-"sprot"} ## sprot(swissprot), trembl, all(both)
+
 ################################
 
 mkdir -p $db_dir
@@ -75,51 +78,75 @@ function download_phrog_hmm(){
     version=${1:-'v3'}
     db_dir=${2:-'.'}
 
-    mkdir -p $db_dir/PHROG/$version && cd $db_dir/PHROG/$version
+    mkdir -p $db_dir/PHROG/HMM_$version && cd $db_dir/PHROG/HMM_$version
 
+    ## HMM profile
     ## data download from http://millardlab.org/2021/11/21/phage-annotation-with-phrogs/
-    wget http://s3.climb.ac.uk/ADM_share/all_phrogs.hmm.gz
-    ## offical website HMM is provied hhm file, which is used for hhsearch
-    #wget https://phrogs.lmge.uca.fr/downloads_from_website/HMM_phrog.tar.gz
-    wget https://phrogs.lmge.uca.fr/downloads_from_website/phrog_annot_$version.tsv
+    wget https://millardlab-taxmyphage.s3.climb.ac.uk/all_phrogs.hmm.gz
     gunzip all_phrogs.hmm.gz
+    ## offical website HMM is provied hhm file, which is used for hhsearch
+    wget --no-check-certificate https://phrogs.lmge.uca.fr/downloads_from_website/phrog_annot_$version.tsv
     ln -s `pwd`/all_phrogs.hmm ..
+    ln -s `pwd`/phrog_annot_$version.tsv ../phrog_annot.tsv
     cd - && echo "PHROG done"
 }
 
-function download_uniprot_seq(){
-    version=${1:-""} ## sprot, trembl, all
+function download_phrog_mmseqsdb(){
+    version=${1:-'v4'}
     db_dir=${2:-'.'}
 
-    mkdir -p $db_dir/uniprot/$version && cd $db_dir/uniprot/$version
-    if [ $version == "all" || $version == "sprot" ];then
-        wget https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.fasta.gz
-        wget https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.dat.gz
-        gunzip uniprot_sprot.fasta.gz uniprot_sprot.dat.gz
-    elif [ $version == "all" || $version == "trembl" ];then
-        wget https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_trembl.fasta.gz
-        wget https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_trembl.dat.gz
-        gunzip uniprot_trembl.fasta.gz uniprot_trembl.dat.gz
-    elif [ $version == "all" ];then
-        cat uniprot_sprot.fasta uniprot_trembl.fasta >uniprot_trembl_sprot.merge.fasta
-    fi
+    mkdir -p $db_dir/phrog/MMseqs_$version && cd $db_dir/phrog/MMseqs_$version
+
+    ## data download
+    wget --no-check-certificate https://phrogs.lmge.uca.fr/downloads_from_website/phrogs_mmseqs_db.tar.gz
+    tar -zxvf phrogs_mmseqs_db.tar.gz && rm -f phrogs_mmseqs_db.tar.gz
+
+    wget --no-check-certificate https://phrogs.lmge.uca.fr/downloads_from_website/phrog_annot_$version.tsv
+    ln -s `pwd`/phrogs_mmseqs_db/phrogs_profile_db ..
+    ln -s `pwd`/phrog_annot_$version.tsv ../phrog_annot.tsv
+    cd - && echo "PHROG done"
 }
 
-function download_pdb_seq(){
-    version=${1:-""}
-    db_dir=${2:-'.'}
+## unfinish
+# function download_uniprot_seq(){
+#     version=${1:-""} ## sprot, trembl, all
+#     db_dir=${2:-'.'}
 
-    mkdir -p $db_dir/pdb && cd $db_dir/pdb
-    wget https://ftp.wwpdb.org/pub/pdb/derived_data/pdb_seqres.txt.gz
-    gunzip pdb_seqres.txt.gz
-    grep \> pdb_seqres.txt |cut -d " " -f 1,4-200|sed 's/>//g' |sed 's/  /\t/' >pdb_seqres.header.anno.txt
-}
+#     mkdir -p $db_dir/uniprot/$version && cd $db_dir/uniprot/$version
+#     if [ $version == "all" || $version == "sprot" ];then
+#         mkdir -p $db_dir/uniprot/$version && cd $db_dir/uniprot/$version
+#         wget https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.fasta.gz
+#         wget https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.dat.gz
+#         gunzip uniprot_sprot.fasta.gz uniprot_sprot.dat.gz
+#     elif [ $version == "all" || $version == "trembl" ];then
+#         wget https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_trembl.fasta.gz
+#         wget https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_trembl.dat.gz
+#         gunzip uniprot_trembl.fasta.gz uniprot_trembl.dat.gz
+#     elif [ $version == "all" ];then
+#         cat uniprot_sprot.fasta uniprot_trembl.fasta >uniprot_trembl_sprot.merge.fasta
+#     fi
+# }
+
+# function download_pdb_seq(){
+#     version=${1:-""}
+#     db_dir=${2:-'.'}
+
+#     mkdir -p $db_dir/pdb && cd $db_dir/pdb
+#     wget https://ftp.wwpdb.org/pub/pdb/derived_data/pdb_seqres.txt.gz
+#     gunzip pdb_seqres.txt.gz
+#     grep \> pdb_seqres.txt |cut -d " " -f 1,4-200|sed 's/>//g' |sed 's/  /\t/' >pdb_seqres.header.anno.txt
+# }
 
 ##########################
 ## main ##
 ##########################
 download_kegg_hmm $kegg_version $db_dir
-download_vog_hmm $vog_version $db_dir
-download_pfam_hmm $pfam_versiom $db_dir
-download_uniprot_seq $uniprot_version $db_dir
-download_phrog_hmm $phrog_version $db_dir
+# download_vog_hmm $vog_version $db_dir
+# download_pfam_hmm $pfam_versiom $db_dir
+
+# download_phrog_hmm $phrog_version_hmm $db_dir
+# download_phrog_mmseqsdb $phrog_version_mmseqs $db_dir
+
+## unfinished
+# download_uniprot_seq $uniprot_version $db_dir
+# download_pdb_seq $pdb_version $db_dir

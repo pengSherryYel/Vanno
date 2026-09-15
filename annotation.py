@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from Bio import SeqIO
-from subprocess import Popen
+from subprocess import Popen, PIPE, STDOUT
 import argparse
 import sys
 import logging
@@ -28,7 +28,7 @@ anno.add_argument('-i', type=str, required=True, help='input faa file')
 ##optional
 anno.add_argument('-o', type=str, default="./Vanno_opt",
                   help="path to deposit output folder and temporary files, will create if doesn't exist [default= working directory]")
-anno.add_argument('-t', type=int, default='6',
+anno.add_argument('-t', type=int, default='1',
                   help='number of threads, each occupies 1 CPU [default=1, max of 1 CPU per scaffold]')
 #anno.add_argument('-virome', action='store_true',
 #                  help='use this setting if dataset is known to be comprised mainly of viruses. More sensitive to viruses, less sensitive to false identifications [default=off]')
@@ -50,6 +50,7 @@ anno.add_argument('-pc', '--pfamC',type=float, default="1e-5", dest="pc", help="
 anno.add_argument('-pf', '--pfamF',action='store_true',dest="pf",default=False, help="force rerun pfam")
 
 anno.add_argument('-r', '--phrog',action='store_true',dest="phrog",default=False, help="run phrog")
+anno.add_argument('-rs', '--phrog_mode',choices=['hmmsearch','mmseqs'],dest="phrog_mode",default="mmseqs", help="run phrog use mmseqs|hmmsearch")
 anno.add_argument('-rc', '--phrogC',type=float, default="1e-5", dest="rc", help="phrog creteria. discard the not meet this creteria")
 anno.add_argument('-rf', '--phrogF',action='store_true',dest="rf",default=False, help="force rerun phrog")
 
@@ -72,9 +73,12 @@ args = anno.parse_args()
 thread=args.t
 input_faa=args.i
 outputD = args.o
+phrog_mode = args.phrog_mode
 print("Results will be store at %s"%outputD)
 
+######################
 ## perpare the dir
+######################
 if not os.path.exists(str(outputD)):
     Popen('mkdir -p ' + str(outputD) + ' 2>/dev/null', shell=True)
     print('mkdir -p', str(outputD))
@@ -82,23 +86,29 @@ logging.basicConfig(filename=os.path.join(str(outputD)+'anno.log'), level=loggin
 
 ## check database file
 databases=args.d
-kegg_db=os.path.join(databases,"KEGG_profiles_prokaryotes.HMM")
-pfam_db=os.path.join(databases,"Pfam-A.hmm")
-vog_db=os.path.join(databases,"VOGDB_phage.HMM")
-phrog_db=os.path.join(databases,"all_phrogs.hmm")
-phrog_db_anno=os.path.join(databases,"phrog_annot.tsv")
+kegg_db=os.path.join(databases,"kegg/KEGG_profiles_prokaryotes.HMM")
+pfam_db=os.path.join(databases,"pfam/Pfam-A.hmm")
+vog_db=os.path.join(databases,"vog/VOGDB_phage.HMM")
 
-if args.uniprotDB == "sprot":
-    uniprot_db=os.path.join(databases,"uniprot_sprot.fasta")
-elif args.uniprotDB == "trembl":
-    uniprot_db=os.path.join(databases,"uniprot_trembl.fasta")
-elif args.uniprotDB == "all":
-    uniprot_db=os.path.join(databases,"uniprot_trembl_sprot.merge.fasta")
-else:
-    print("Wrong parameter")
+if phrog_mode == "hmmsearch":
+    phrog_db=os.path.join(databases,"phrog/all_phrogs.hmm")
+    phrog_db_anno=os.path.join(databases,"phrog/phrog_annot.tsv")
+elif phrog_mode == "mmseqs":
+    phrog_db=os.path.join(databases,"phrog/phrogs_profile_db")
+    phrog_db_anno=os.path.join(databases,"phrog/phrog_annot.tsv")
 
-pdb_db=os.path.join(databases,"pdb_seqres.txt")
-pdb_db_anno=os.path.join(databases,"pdb_seqres.header.anno.txt")
+## unipriot and pdb unfinished, so comment out
+# if args.uniprotDB == "sprot":
+#     uniprot_db=os.path.join(databases,"uniprot_sprot.fasta")
+# elif args.uniprotDB == "trembl":
+#     uniprot_db=os.path.join(databases,"uniprot_trembl.fasta")
+# elif args.uniprotDB == "all":
+#     uniprot_db=os.path.join(databases,"uniprot_trembl_sprot.merge.fasta")
+# else:
+#     print("Wrong parameter")
+
+# pdb_db=os.path.join(databases,"pdb_seqres.txt")
+# pdb_db_anno=os.path.join(databases,"pdb_seqres.header.anno.txt")
 
 
 def checkdb(db_file):
@@ -108,11 +118,20 @@ def checkdb(db_file):
     else:
         logging.info("using db_file: %s"%db_file)
 
-checkdb(kegg_db)
-checkdb(pfam_db)
-checkdb(vog_db)
-checkdb(phrog_db)
-checkdb(pdb_db)
+if args.kegg:
+    checkdb(kegg_db)
+
+if args.pfam:
+    checkdb(pfam_db)
+
+if args.vog:
+    checkdb(vog_db)
+
+if args.phrog:
+    checkdb(phrog_db)
+
+if args.pdb:
+    checkdb(pdb_db)
 
 
 ## run hmmer to annotation
@@ -120,32 +139,7 @@ thread = args.t
 
 ## step1 : split input faa file
 print(thread)
-'''
-filtered_seq = []
-summary_dict = defaultdict(list)
-protein_total_number = 0
-for seq in SeqIO.parse(args.i,'fasta'):
-    protein_name = seq.id
-    contig_name = protein_name.rsplit("_",1)[0]
-    length = len(seq)
-    summary_dict[protein_name].append(contig_name)
 
-    if length >= args.l:
-        filtered_seq.append(seq)
-        protein_total_number += 1
-
-chunk_file_list = []
-for chunk in range(int(thread)):
-    step = math.celi(protein_total_number/thread)
-    chunk_output = "tmp_%s_para.faa"%chunk
-    chunk_file_list.append(chunk_output)
-
-    start=0
-    end = start + step
-    chunk_seq = filtered_seq[start:end]
-    SeqIO.write(chunk_seq,chunk_output,'fasta')
-    staru
-'''
 
 
 ##########################
@@ -167,12 +161,13 @@ def runHmmsearch(inputfile, prefix, wd, hmmModel, otherPara="-T 40 --cpu 1"):
     Return: output file path (*.tblout)
     '''
 
-    #checkEnv("hmmsearch")
+    checkEnv("hmmsearch")
     mkdirs(wd)
     cmd = "hmmsearch --noali {4} -o {2}/{1}.hmmsearch.out --tblout {2}/{1}.hmmsearch.tblout {3} {0}".format(
         inputfile, prefix, wd, hmmModel, otherPara)
     print("RUN command: %s\n" % cmd)
-    obj = Popen(cmd, shell=True)
+    obj = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
+    [logging.info(line.rstrip()) for line in obj.stdout]
     obj.wait()
     print("hmmsearch done!")
     return "%s/%s.hmmsearch.tblout" % (wd, prefix)
@@ -193,16 +188,43 @@ def runPhmmer(inputfile, prefix, wd, dbseq, otherPara="-T 40 --cpu 1"):
     Return: output file path (*.tblout)
     '''
 
-    #checkEnv("hmmsearch")
+    checkEnv("phmmer")
     mkdirs(wd)
     cmd = "phmmer --noali {4} -o {2}/{1}.phmmer.out --tblout {2}/{1}.phmmer.tblout {0} {3}".format(
         inputfile, prefix, wd, dbseq, otherPara)
     print("RUN command: %s\n" % cmd)
-    obj = Popen(cmd, shell=True)
+    obj = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
+    [logging.info(line.rstrip()) for line in obj.stdout]
     obj.wait()
     print("phmmer done!")
     return "%s/%s.phmmer.tblout" % (wd, prefix)
 
+
+def runMMseqs(inputfile, prefix, wd, dbseq, otherPara="-s 7"):
+    checkEnv("mmseqs")
+    mkdirs(wd)
+    dbseq = os.path.realpath(dbseq)
+    cmd = "mmseqs createdb {0} {2}/{1}.target_seq ".format(inputfile, prefix, wd)
+    cmd2 = "mmseqs search {3} {2}/{1}.target_seq {2}/{1}.results_mmseqs ./tmp {4}".format(inputfile, prefix, wd, dbseq, otherPara)
+    cmd3 = "mmseqs createtsv {3} {2}/{1}.target_seq {2}/{1}.results_mmseqs {2}/{1}.results.tsv".format(inputfile, prefix, wd, dbseq, otherPara)
+
+    print("RUN command: %s\n" % cmd)
+    obj = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
+    [logging.info(line.rstrip()) for line in obj.stdout]
+    obj.wait()
+
+    print("RUN command: %s\n" % cmd2)
+    # obj = Popen(cmd2, shell=True)
+    obj = Popen(cmd2, shell=True, stdout=PIPE, stderr=STDOUT)
+    [logging.info(line.rstrip()) for line in obj.stdout]
+    obj.wait()
+
+    print("RUN command: %s\n" % cmd3)
+    obj = Popen(cmd3, shell=True, stdout=PIPE, stderr=STDOUT)
+    [logging.info(line.rstrip()) for line in obj.stdout])
+    obj.wait()
+    print("mmseqs done!")
+    return "%s/%s.results.tsv" % (wd, prefix)
 
 
 def load_hmmsearch_opt(hmmsearch_opt, creteria=1e-5, reverse=False):
@@ -245,26 +267,40 @@ def load_hmmsearch_opt(hmmsearch_opt, creteria=1e-5, reverse=False):
         return annoMinD
 
 
-def oneStepRun(inputfile, prefix, wd, db, outD, otherPara="-T 40 --cpu 1",creteria=1e-5, force=False, program="hmmsearch"):
+def oneStepRun(inputfile, prefix, wd, db, outD, otherPara,creteria, force=False, program="hmmsearch"):
     print("###### %s begin ######"%prefix)
     hmm_outPath = ""
     if program == "hmmsearch":
         hmm_outPath = "%s/%s.hmmsearch.tblout" % (wd, prefix)
         hmmModel = db
         if not os.path.exists(hmm_outPath) or force:
-            hmm_outPath = runHmmsearch(inputfile, prefix, wd, hmmModel, otherPara="-T 40 --cpu 1")
+            hmm_outPath = runHmmsearch(inputfile, prefix, wd, hmmModel, otherPara=otherPara)
         else:
             print("Skip %s the running part, cause output file found!"%prefix)
-        annoD = load_hmmsearch_opt(hmm_outPath, creteria=1e-5, reverse=False)
+        annoD = load_hmmsearch_opt(hmm_outPath, creteria=creteria, reverse=False)
 
     elif program == "phmmer":
         hmm_outPath = "%s/%s.phmmer.tblout" % (wd, prefix)
         dbseq = db
         if not os.path.exists(hmm_outPath) or force:
-            hmm_outPath = runPhmmer(inputfile, prefix, wd, dbseq, otherPara="-T 40 --cpu 1")
+            hmm_outPath = runPhmmer(inputfile, prefix, wd, dbseq, otherPara=otherPara)
         else:
             print("Skip %s the running part, cause output file found!"%prefix)
-        annoD = load_hmmsearch_opt(hmm_outPath, creteria=1e-5, reverse=True)
+        annoD = load_hmmsearch_opt(hmm_outPath, creteria=creteria, reverse=True)
+
+    elif program == "mmseqs":
+        mmseq_outPath = "%s/%s.mmseqs.results.tsv" % (wd, prefix)
+        dbseq = db
+        if not os.path.exists(mmseq_outPath) or force:
+            mmseq_outPath = runMMseqs(inputfile, "%s_mmseqs"%prefix, "%s_mmseqs"%wd, dbseq, otherPara=otherPara)
+        else:
+            print("Skip %s the running part, cause output file found!"%prefix)
+        annoD = load_hmmsearch_opt(mmseq_outPath, creteria=1e-5, reverse=True)
+
+    else:
+        print("Wrong program parameter! please use hmmsearch|phmmer|mmseqs")
+        exit()
+
     outD[prefix] = annoD
     print("###### %s end ######"%prefix)
 
@@ -328,12 +364,19 @@ if args.pfam:
 
 ###########################  Run/Parse PHROG hmmsearch ##########################
 if args.phrog:
+    
     phrogOptD=os.path.join(outputD,"phrog")
     argsL = [input_faa, "phrog", phrogOptD, phrog_db, outD]
-    kwargsD = {"otherPara":"-T 40 --cpu %s"%(thread),
-                "creteria":args.rc,
-                "force":args.rf,
-                "program":"hmmsearch"}
+    if args.phrog_mode == "hmmsearch":
+        kwargsD = {"otherPara":"-T 40 --cpu %s"%(thread),
+                    "creteria":args.rc,
+                    "force":args.rf,
+                    "program":args.phrog_mode}
+    elif args.phrog_mode == "mmseqs":
+        kwargsD = {"otherPara":"-s 7 --threads %s"%(thread),
+                    "creteria":args.rc,
+                    "force":args.rf,
+                    "program":args.phrog_mode}
     phrogt = Thread(target=oneStepRun,args=argsL, kwargs=kwargsD)
     phrogt.start()
 
@@ -402,3 +445,5 @@ if args.pdb:
 res_df.to_csv(summaryFile,index=True,sep="\t")
 
 
+if __name__ == "__main__":
+    print("Vanno done!")
