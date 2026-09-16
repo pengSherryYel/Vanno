@@ -4,9 +4,9 @@
 db_dir=${1:-"./databases"}
 
 ## db version
-kegg_version=${2:-'2022-02-01'}
+kegg_version=${2:-'2026-07-02'}
 vog_version=${3:-'latest'}
-pfam_version=${4:-'Pfam35.0'}
+pfam_version=${4:-'Pfam38.2'}
 phrog_version_hmm=${5:-"v4"}
 phrog_version_mmseqs=${6:-"v4"}
 
@@ -35,7 +35,7 @@ function download_kegg_hmm(){
     wget ftp://ftp.genome.jp/pub/db/kofam/archives/$version/profiles.tar.gz
     tar -zxvf profiles.tar.gz
     cat profiles/prokaryote.hal |xargs -i cat profiles/{} >KEGG_profiles_prokaryotes.HMM
-    ln -s `pwd`/KEGG_profiles_prokaryotes.HMM ..
+    ln -fs `pwd`/KEGG_profiles_prokaryotes.HMM .. && ln -fs `pwd`/ko_list.gz ..
     cd -  && echo "kegg done with version: $version"
 
 }
@@ -48,34 +48,41 @@ function download_vog_hmm(){
 
      mkdir -p $db_dir/vog/$version && cd $db_dir/vog/$version
 
-     wget https://fileshare.csb.univie.ac.at/vog/$version/vog.hmm.tar.gz &
+     wget https://fileshare.csb.univie.ac.at/vog/$version/vog.hmm.tar.gz && \
      wget https://fileshare.csb.univie.ac.at/vog/$version/vog.annotations.tsv.gz
      wait
+     gzip -d vog.hmm.tar.gz && tar -xvf vog.hmm.tar 
+     cat hmm/* >VOGDB_all.HMM
+     ln -fs `pwd`/VOGDB_all.HMM .. && ln -fs `pwd`/vog.annotations.tsv.gz ..
+
+     ## can select part from vibrant. Later add 
      ## only pick the virus related vog, this were from vibrant.
-     ## retaining profiles that had at least one significant hit to any of the 15,238 NCBI-acquired viruses using BLASTp.
-     mkdir vog_hmm && tar -zxvf vog.annotations.tsv.gz vog_hmm
-     cat $vog_only_virus_vibrant|sed 's/\r//;s/$/.hmm/'|xargs -i cat vog_hmm/{} >VOGDB_phage.HMM
-     ln -s `pwd`/VOGDB_phage.HMM ..
+     ## retaining profiles that had at least one significant hit to any of the 15,238 NCBI-acquired viruses using BLASTp. 
+    #  mkdir vog_hmm_vibrant
+    #  cat $vog_only_virus_vibrant|sed 's/\r//;s/$/.hmm/'|xargs -i cat hmm/{} >VOGDB_phage.HMM
+    #  ln -s `pwd`/VOGDB_phage.HMM .. 
+
      cd - && echo "vog done with version: $version"
+
 }
 
 ## pfam db
 function download_pfam_hmm(){
-     version=${1:-'Pfam35.0'}
+     version=${1:-'Pfam38.2'}
      db_dir=${2:-'.'}
 
      mkdir -p $db_dir/pfam/$version && cd $db_dir/pfam/$version
 
-     wget ftp://ftp.ebi.ac.uk/pub/databases/Pfam/releases/$version/Pfam-A.hmm.gz
-     wget ftp://ftp.ebi.ac.uk/pub/databases/Pfam/releases/$version/Pfam-A.hmm.dat.gz
+     wget https://ftp.ebi.ac.uk/pub/databases/Pfam/releases/$version/Pfam-A.hmm.gz
+     wget https://ftp.ebi.ac.uk/pub/databases/Pfam/releases/$version/Pfam-A.hmm.dat.gz
      gunzip Pfam-A.hmm.gz
-     ln -s `pwd`/Pfam-A.hmm ..
+     ln -s `pwd`/Pfam-A.hmm .. && ln -s `pwd`/Pfam-A.hmm.dat.gz ..
      cd - && echo "pfam done with version: $version"
 }
 
 ## PHROG db
 function download_phrog_hmm(){
-    version=${1:-'v3'}
+    version=${1:-'v4'}
     db_dir=${2:-'.'}
 
     mkdir -p $db_dir/PHROG/HMM_$version && cd $db_dir/PHROG/HMM_$version
@@ -140,12 +147,12 @@ function download_phrog_mmseqsdb(){
 ##########################
 ## main ##
 ##########################
-download_kegg_hmm $kegg_version $db_dir
+# download_kegg_hmm $kegg_version $db_dir
 # download_vog_hmm $vog_version $db_dir
-# download_pfam_hmm $pfam_versiom $db_dir
+# download_pfam_hmm $pfam_version $db_dir
 
-# download_phrog_hmm $phrog_version_hmm $db_dir
-# download_phrog_mmseqsdb $phrog_version_mmseqs $db_dir
+download_phrog_hmm $phrog_version_hmm $db_dir
+download_phrog_mmseqsdb $phrog_version_mmseqs $db_dir
 
 ## unfinished
 # download_uniprot_seq $uniprot_version $db_dir

@@ -5,6 +5,7 @@
 
 import os
 from subprocess import Popen
+import pandas as pd
 
 
 def mkdirs(dirname):
@@ -36,3 +37,18 @@ def load_phrogs_des(phrogs):
            new_id = "phrog_%s"%pid
            d[new_id] = "Des:%s;Catigory:%s"%(des,cati)
     return d
+
+
+def read_kegg_anno(ko_list_file):
+    ## load kegg annotation
+    f = pd.read_csv(ko_list_file, compression='gzip', header=0, sep='\t', quotechar='"')
+    keggD = dict(zip(f['knum'], f['definition']))
+    return keggD
+
+
+def read_vog_anno(vog_annotation_file):
+    ## load vog annotation
+    f = pd.read_csv(vog_annotation_file, compression='gzip', header=0, sep='\t', quotechar='"')
+    vogD_fc = dict(zip(f['#GroupName'], f['FunctionalCategory']))
+    vogD_des = dict(zip(f['#GroupName'], f['ConsensusFunctionalDescription']))
+    return vogD_fc, vogD_des

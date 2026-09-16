@@ -9,7 +9,7 @@ import os
 import re
 from threading import Thread
 from collections import defaultdict
-from utility import mkdirs,checkEnv
+from utility import mkdirs, checkEnv, read_kegg_anno, read_vog_anno
 import pandas as pd
 
 ################
@@ -87,8 +87,12 @@ logging.basicConfig(filename=os.path.join(str(outputD)+'anno.log'), level=loggin
 ## check database file
 databases=args.d
 kegg_db=os.path.join(databases,"kegg/KEGG_profiles_prokaryotes.HMM")
+kegg_anno_file=os.path.join(databases,"kegg/ko_list.gz")
+
 pfam_db=os.path.join(databases,"pfam/Pfam-A.hmm")
-vog_db=os.path.join(databases,"vog/VOGDB_phage.HMM")
+
+vog_db=os.path.join(databases,"vog/VOGDB_all.HMM")
+vog_anno_file=os.path.join(databases,"vog/vog.annotations.tsv.gz")
 
 if phrog_mode == "hmmsearch":
     phrog_db=os.path.join(databases,"phrog/all_phrogs.hmm")
@@ -221,7 +225,7 @@ def runMMseqs(inputfile, prefix, wd, dbseq, otherPara="-s 7"):
 
     print("RUN command: %s\n" % cmd3)
     obj = Popen(cmd3, shell=True, stdout=PIPE, stderr=STDOUT)
-    [logging.info(line.rstrip()) for line in obj.stdout])
+    [logging.info(line.rstrip()) for line in obj.stdout]
     obj.wait()
     print("mmseqs done!")
     return "%s/%s.results.tsv" % (wd, prefix)
@@ -428,6 +432,23 @@ fmt_outD = split_dict_for_pandas(outD)
 res_df = pd.DataFrame.from_dict(fmt_outD)
 res_df = res_df.fillna("NA")
 print(res_df)
+
+##################################
+## add annotaion for the results
+##################################
+## add kegg annotation
+if args.kegg:
+    keggD = read_kegg_anno(kegg_anno_file)
+    res_df["kegg_defination"] = res_df["kegg_des"].map(keggD)  
+
+
+## add vog annotation
+if args.vog:
+    vogD_fc, vogD_des = read_vog_anno(vog_anno_file)
+    res_df["vog_FunctionalCategory"] = res_df["vog_des"].map(vogD_fc)
+    res_df["vog_FunctionalDescription"] = res_df["vog_des"].map(vogD_des)  
+
+
 
 ## add phrog annotation
 if args.phrog:
