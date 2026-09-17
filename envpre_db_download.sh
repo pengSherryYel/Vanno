@@ -76,7 +76,7 @@ function download_pfam_hmm(){
      wget https://ftp.ebi.ac.uk/pub/databases/Pfam/releases/$version/Pfam-A.hmm.gz
      wget https://ftp.ebi.ac.uk/pub/databases/Pfam/releases/$version/Pfam-A.hmm.dat.gz
      gunzip Pfam-A.hmm.gz
-     ln -s `pwd`/Pfam-A.hmm .. && ln -s `pwd`/Pfam-A.hmm.dat.gz ..
+     ln -fs `pwd`/Pfam-A.hmm .. && ln -fs `pwd`/Pfam-A.hmm.dat.gz ..
      cd - && echo "pfam done with version: $version"
 }
 
@@ -85,7 +85,7 @@ function download_phrog_hmm(){
     version=${1:-'v4'}
     db_dir=${2:-'.'}
 
-    mkdir -p $db_dir/PHROG/HMM_$version && cd $db_dir/PHROG/HMM_$version
+    mkdir -p $db_dir/phrog/HMM_$version && cd $db_dir/phrog/HMM_$version
 
     ## HMM profile
     ## data download from http://millardlab.org/2021/11/21/phage-annotation-with-phrogs/
@@ -93,8 +93,8 @@ function download_phrog_hmm(){
     gunzip all_phrogs.hmm.gz
     ## offical website HMM is provied hhm file, which is used for hhsearch
     wget --no-check-certificate https://phrogs.lmge.uca.fr/downloads_from_website/phrog_annot_$version.tsv
-    ln -s `pwd`/all_phrogs.hmm ..
-    ln -s `pwd`/phrog_annot_$version.tsv ../phrog_annot.tsv
+    ln -fs `pwd`/all_phrogs.hmm ..
+    ln -fs `pwd`/phrog_annot_$version.tsv ../phrog_annot.tsv
     cd - && echo "PHROG done"
 }
 
@@ -109,8 +109,8 @@ function download_phrog_mmseqsdb(){
     tar -zxvf phrogs_mmseqs_db.tar.gz && rm -f phrogs_mmseqs_db.tar.gz
 
     wget --no-check-certificate https://phrogs.lmge.uca.fr/downloads_from_website/phrog_annot_$version.tsv
-    ln -s `pwd`/phrogs_mmseqs_db/phrogs_profile_db ..
-    ln -s `pwd`/phrog_annot_$version.tsv ../phrog_annot.tsv
+    ln -fs `pwd`/phrogs_mmseqs_db/phrogs_profile_db ..
+    ln -fs `pwd`/phrog_annot_$version.tsv ../phrog_annot.tsv
     cd - && echo "PHROG done"
 }
 
@@ -151,8 +151,8 @@ function download_phrog_mmseqsdb(){
 # download_vog_hmm $vog_version $db_dir
 # download_pfam_hmm $pfam_version $db_dir
 
-download_phrog_hmm $phrog_version_hmm $db_dir
-download_phrog_mmseqsdb $phrog_version_mmseqs $db_dir
+# download_phrog_hmm $phrog_version_hmm $db_dir
+# download_phrog_mmseqsdb $phrog_version_mmseqs $db_dir
 
 ## unfinished
 # download_uniprot_seq $uniprot_version $db_dir
