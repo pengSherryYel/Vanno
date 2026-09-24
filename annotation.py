@@ -10,6 +10,7 @@ import re
 from threading import Thread
 from collections import defaultdict
 from utility import mkdirs, checkEnv, read_kegg_anno, read_vog_anno
+from fmtparser import parse_hhsuit_hhr, parse_hmmsearch_opt, parse_m8_fmt_opt
 import pandas as pd
 
 ################
@@ -29,7 +30,7 @@ anno.add_argument('-i', type=str, required=True, help='input faa file')
 anno.add_argument('-o', type=str, default="./Vanno_opt",
                   help="path to deposit output folder and temporary files, will create if doesn't exist [default= working directory]")
 anno.add_argument('-t', type=int, default='1',
-                  help='number of threads, each occupies 1 CPU [default=1, max of 1 CPU per scaffold]')
+                  help='number of threads, each software occupies 1 CPU [default=1, max of 1 CPU per scaffold]')
 #anno.add_argument('-virome', action='store_true',
 #                  help='use this setting if dataset is known to be comprised mainly of viruses. More sensitive to viruses, less sensitive to false identifications [default=off]')
 #anno.add_argument('-no_plot', action='store_true',
@@ -50,8 +51,10 @@ anno.add_argument('-pc', '--pfamC',type=float, default="1e-5", dest="pc", help="
 anno.add_argument('-pf', '--pfamF',action='store_true',dest="pf",default=False, help="force rerun pfam")
 
 anno.add_argument('-r', '--phrog',action='store_true',dest="phrog",default=False, help="run phrog")
-anno.add_argument('-rs', '--phrog_mode',choices=['hmmsearch','mmseqs'],dest="phrog_mode",default="mmseqs", help="run phrog use mmseqs|hmmsearch")
+anno.add_argument('-rs', '--phrog_mode',choices=['hmmsearch','mmseqs','hhblits'],dest="phrog_mode",default="hhblits", help="run phrog use mmseqs|hmmsearch|hhblits")
 anno.add_argument('-rc', '--phrogC',type=float, default="1e-5", dest="rc", help="phrog creteria. discard the not meet this creteria")
+anno.add_argument('-rp', '--phrogProb',type=float, default="95", dest="rp", help="phrog creteria when using hhblits. discard the not meet this creteria")
+
 anno.add_argument('-rf', '--phrogF',action='store_true',dest="rf",default=False, help="force rerun phrog")
 
 anno.add_argument('-u', '--uniprot',action='store_true',dest="uniprot",default=False, help="run uniprot(default swiss-prot)")
@@ -100,6 +103,10 @@ if phrog_mode == "hmmsearch":
 elif phrog_mode == "mmseqs":
     phrog_db=os.path.join(databases,"phrog/phrogs_profile_db")
     phrog_db_anno=os.path.join(databases,"phrog/phrog_annot.tsv")
+elif phrog_mode == "hhblits":
+    phrog_db=os.path.join(databases,"phrog/phrogs_hhm.ffdata")
+    phrog_db_anno=os.path.join(databases,"phrog/phrog_annot.tsv")
+
 
 ## unipriot and pdb unfinished, so comment out
 # if args.uniprotDB == "sprot":
@@ -142,13 +149,12 @@ if args.pdb:
 thread = args.t
 
 ## step1 : split input faa file
-print(thread)
+print("Using %s threads" % thread)
 
 
-
-##########################
-#### Function ############
-##########################
+#################################
+#### Search Function ############
+#################################
 
 def runHmmsearch(inputfile, prefix, wd, hmmModel, otherPara="-T 40 --cpu 1"):
     '''
@@ -204,13 +210,35 @@ def runPhmmer(inputfile, prefix, wd, dbseq, otherPara="-T 40 --cpu 1"):
     return "%s/%s.phmmer.tblout" % (wd, prefix)
 
 
-def runMMseqs(inputfile, prefix, wd, dbseq, otherPara="-s 7"):
+def runHHblits(inputfile, prefix, wd, dbseq, otherPara="-n 1 -cpu 1 -e 0.001 -E 1e-5-p 90"):
+    checkEnv("hhblits")
+    mkdirs(wd)
+    dbseq = os.path.dirname(os.path.realpath(dbseq))
+    cmd  = "ffindex_from_fasta -s {2}/{1}.queryindex.multifasta.ff{{data,index}} {0} ".format(inputfile, prefix, wd, dbseq, otherPara)
+    cmd2 = r"hhblits_omp -i {2}/{1}.queryindex.multifasta -d {3}/phrogs -o {2}/{1}.res.hhr -blasttab {2}/{1}.res.m8 {4} &&\
+     tr -cd '\11\12\15\40-\176' < {2}/{1}.res.m8.ffdata > {2}/{1}.res.m8.plain_out.tsv".format(inputfile, prefix, wd, dbseq, otherPara)
+    
+    print("RUN command: %s\n" % cmd)
+    obj = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
+    [logging.info(line.rstrip()) for line in obj.stdout]
+    obj.wait()
+
+    print("RUN command: %s\n" % cmd2)
+    obj = Popen(cmd2, shell=True, stdout=PIPE, stderr=STDOUT)
+    [logging.info(line.rstrip()) for line in obj.stdout]
+    obj.wait()
+
+    print("HHblits done!")
+    return "%s/%s.res.hhr.ffdata.filtered_besthit.tsv" % (wd, prefix)
+
+
+def runMMseqs(inputfile, prefix, wd, dbseq, otherPara="-s 6.5"):
     checkEnv("mmseqs")
     mkdirs(wd)
     dbseq = os.path.realpath(dbseq)
-    cmd = "mmseqs createdb {0} {2}/{1}.target_seq ".format(inputfile, prefix, wd)
-    cmd2 = "mmseqs search {3} {2}/{1}.target_seq {2}/{1}.results_mmseqs ./tmp {4}".format(inputfile, prefix, wd, dbseq, otherPara)
-    cmd3 = "mmseqs createtsv {3} {2}/{1}.target_seq {2}/{1}.results_mmseqs {2}/{1}.results.tsv".format(inputfile, prefix, wd, dbseq, otherPara)
+    cmd = "mmseqs createdb {0} {2}/{1}.query_seq ".format(inputfile, prefix, wd)
+    cmd2 = "mmseqs search {2}/{1}.query_seq {3} {2}/{1}.results_mmseqs  ./tmp {4}".format(inputfile, prefix, wd, dbseq, otherPara)
+    cmd3 = "mmseqs createtsv {3} {2}/{1}.query_seq {2}/{1}.results_mmseqs {2}/{1}.results.tsv".format(inputfile, prefix, wd, dbseq, otherPara)
 
     print("RUN command: %s\n" % cmd)
     obj = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
@@ -218,7 +246,6 @@ def runMMseqs(inputfile, prefix, wd, dbseq, otherPara="-s 7"):
     obj.wait()
 
     print("RUN command: %s\n" % cmd2)
-    # obj = Popen(cmd2, shell=True)
     obj = Popen(cmd2, shell=True, stdout=PIPE, stderr=STDOUT)
     [logging.info(line.rstrip()) for line in obj.stdout]
     obj.wait()
@@ -231,47 +258,11 @@ def runMMseqs(inputfile, prefix, wd, dbseq, otherPara="-s 7"):
     return "%s/%s.results.tsv" % (wd, prefix)
 
 
-def load_hmmsearch_opt(hmmsearch_opt, creteria=1e-5, reverse=False):
-    '''
-    Aim: parse the hmmersearch output. this file contain multiple columns. is the output from -tblout parameter
-    reverse: sometimes the query id and ref id are in different place. if false first query, second ref, verse visa.
-    Return: dict.  d[refname][annoacc] = description
-    '''
-    print("loading hmmsearch output")
-    annoD = defaultdict(dict)
-    annoMinD = defaultdict(dict)
-    tmp = {}
-    with open(hmmsearch_opt) as f:
-        for line in f:
-            if not line.startswith("#"):
-                t = re.split("\s+", line.strip("\n"))
-                if not reverse:
-                    target_name, target_accession, query_name, accession, Evalue, score, bias, bst_Evalue, bst_score, bst_bias,\
-                        exp, reg, clu, ov, env, dom, rep, inc, *description_of_target = t
-                elif reverse:
-                    ## because use phmmer, the target and query are change
-                    query_name, accession, target_name, target_accession, Evalue, score, bias, bst_Evalue, bst_score, bst_bias,\
-                        exp, reg, clu, ov, env, dom, rep, inc, *description_of_target = t
-                accession = accession.split(".")[0]
-                # print(target_name,Evalue,bst_Evalue)
-                if float(Evalue) <= float(creteria) and float(bst_Evalue) <= float(creteria):
-                    annoD[target_name][accession] = query_name
-                    ## add minEvalue select this only fetch a target a ref with smallest value
-                    if target_name not in tmp:
-                        tmp[target_name] = [accession,query_name,Evalue]
-                    else:
-                        if float(Evalue) <= float(tmp[target_name][2]):
-                            tmp[target_name] = [accession,query_name,Evalue]
-        ##format tmp
-        for key,values in tmp.items():
-            accession,query_name,Evalue = values
-            annoMinD[key][accession] = query_name
 
-        #return annoD
-        return annoMinD
-
-
-def oneStepRun(inputfile, prefix, wd, db, outD, otherPara,creteria, force=False, program="hmmsearch"):
+#################################
+#### Merge Function ##############
+#################################
+def oneStepRun(inputfile, prefix, wd, db, outD, otherPara, creteria, hhblits_prob_cutoff=90, force=False, program="hmmsearch"):
     print("###### %s begin ######"%prefix)
     hmm_outPath = ""
     if program == "hmmsearch":
@@ -281,45 +272,65 @@ def oneStepRun(inputfile, prefix, wd, db, outD, otherPara,creteria, force=False,
             hmm_outPath = runHmmsearch(inputfile, prefix, wd, hmmModel, otherPara=otherPara)
         else:
             print("Skip %s the running part, cause output file found!"%prefix)
-        annoD = load_hmmsearch_opt(hmm_outPath, creteria=creteria, reverse=False)
+        annoD = parse_hmmsearch_opt(hmm_outPath, creteria=creteria, reverse=False)
 
-    elif program == "phmmer":
-        hmm_outPath = "%s/%s.phmmer.tblout" % (wd, prefix)
+    # elif program == "phmmer":
+    #     hmm_outPath = "%s/%s.phmmer.tblout" % (wd, prefix)
+    #     dbseq = db
+    #     if not os.path.exists(hmm_outPath) or force:
+    #         hmm_outPath = runPhmmer(inputfile, prefix, wd, dbseq, otherPara=otherPara)
+    #     else:
+    #         print("Skip %s the running part, cause output file found!"%prefix)
+    #     annoD = parse_hmmsearch_opt(hmm_outPath, creteria=creteria, reverse=True)
+
+    # elif program == "mmseqs":
+    #     mmseq_outPath = "%s/%s.mmseqs.results.tsv" % (wd, prefix)
+    #     dbseq = db
+    #     if not os.path.exists(mmseq_outPath) or force:
+    #         mmseq_outPath = runMMseqs(inputfile, "%s_mmseqs"%prefix, "%s_mmseqs"%wd, dbseq, otherPara=otherPara)
+    #     else:
+    #         print("Skip %s the running part, cause output file found!"%prefix)
+    #     annoD = parse_hmmsearch_opt(mmseq_outPath, creteria=1e-5, reverse=True)
+
+    elif program == "hhblits":
+        hhblits_outPath = "%s/%s.res.hhr.ffdata" % (wd, prefix)
         dbseq = db
-        if not os.path.exists(hmm_outPath) or force:
-            hmm_outPath = runPhmmer(inputfile, prefix, wd, dbseq, otherPara=otherPara)
+        if not os.path.exists(hhblits_outPath) or force:
+            hhblits_outPath = runHHblits(inputfile, prefix, wd, dbseq, otherPara=otherPara)
         else:
             print("Skip %s the running part, cause output file found!"%prefix)
-        annoD = load_hmmsearch_opt(hmm_outPath, creteria=creteria, reverse=True)
+        annoD = parse_hhsuit_hhr(hhblits_outPath, evalue_cutoff=creteria, prob_cutoff=hhblits_prob_cutoff)
 
-    elif program == "mmseqs":
-        mmseq_outPath = "%s/%s.mmseqs.results.tsv" % (wd, prefix)
-        dbseq = db
-        if not os.path.exists(mmseq_outPath) or force:
-            mmseq_outPath = runMMseqs(inputfile, "%s_mmseqs"%prefix, "%s_mmseqs"%wd, dbseq, otherPara=otherPara)
-        else:
-            print("Skip %s the running part, cause output file found!"%prefix)
-        annoD = load_hmmsearch_opt(mmseq_outPath, creteria=1e-5, reverse=True)
 
     else:
-        print("Wrong program parameter! please use hmmsearch|phmmer|mmseqs")
+        print("Wrong program parameter! please use hmmsearch|phmmer|mmseqs|hhblits")
         exit()
 
     outD[prefix] = annoD
     print("###### %s end ######"%prefix)
 
+
 def split_dict_for_pandas(indict):
     outd = defaultdict(dict)
     for db,annos in indict.items():
-        for query, values in annos.items():
-            for accession,name in values.items():
-                #print(db,query,name)
+        if db == "pfam":
+            for query, values in annos.items():
+                for target, accession in values.items():
+                    ## because the pfam fmt is different. where descibe is in query_name col; and target id in accession
+                    acc = "%s_acc"%db
+                    des = "%s_des"%db
+                    #print(db,query,name)
+                    outd[des][query]= target
+                    outd[acc][query]= accession
+        else:
+            ## for vog, kegg, phrogs using hmmer will add descrption below
+            for query, values in annos.items():
+                for target, info in values.items():
+                    acc = "%s_acc"%db
+                    outd[acc][query]= target
 
-                des = "%s_des"%db
-                acc = "%s_acc"%db
-                outd[des][query]= name
-                outd[acc][query]= accession
     return outd
+
 
 ###########################
 #### main Programe ########
@@ -366,21 +377,35 @@ if args.pfam:
     pfamt.start()
     #runHmmsearch(input_faa, "pfam", pfamOptD, pfam_db, otherPara="-T 40 --cpu %s"%(thread))
 
-###########################  Run/Parse PHROG hmmsearch ##########################
+###########################  Run/Parse PHROG hmmsearch|mmseqs|hhblits ##########################
 if args.phrog:
-    
-    phrogOptD=os.path.join(outputD,"phrog")
-    argsL = [input_faa, "phrog", phrogOptD, phrog_db, outD]
+
     if args.phrog_mode == "hmmsearch":
+        phrogOptD=os.path.join(outputD,"phrog")
+        argsL = [input_faa, "phrog", phrogOptD, phrog_db, outD]
         kwargsD = {"otherPara":"-T 40 --cpu %s"%(thread),
                     "creteria":args.rc,
                     "force":args.rf,
                     "program":args.phrog_mode}
+
     elif args.phrog_mode == "mmseqs":
+        phrogOptD=os.path.join(outputD,"phrog_mmseqs")
+        argsL = [input_faa, "phrog_mmseqs", phrogOptD, phrog_db, outD]
         kwargsD = {"otherPara":"-s 7 --threads %s"%(thread),
                     "creteria":args.rc,
                     "force":args.rf,
                     "program":args.phrog_mode}
+
+    elif args.phrog_mode == "hhblits":
+        phrogOptD=os.path.join(outputD,"phrog_hhblits")
+        argsL = [input_faa, "phrog_hhblits", phrogOptD, phrog_db, outD]
+        kwargsD = {"otherPara":"-n 1 -e 0.001 -E 1e-5 -p 90 -cpu %s "%(thread),
+                    "creteria":args.rc,
+                    "hhblits_prob_cutoff":args.rp,  ## only for hhblits
+                    "force":args.rf,
+                    "program":args.phrog_mode}
+    else:
+        print("phrogs search mode should be hmmsearch|hhblits|mmseqs")
     phrogt = Thread(target=oneStepRun,args=argsL, kwargs=kwargsD)
     phrogt.start()
 
@@ -427,11 +452,15 @@ if args.uniprot:
 if args.pdb:
     pdbt.join()
 
+
+##################################
+## fmt function annotation
+##################################
+
 summaryFile = os.path.join(outputD,"Vanno_summary.tsv")
 fmt_outD = split_dict_for_pandas(outD)
 res_df = pd.DataFrame.from_dict(fmt_outD)
 res_df = res_df.fillna("NA")
-print(res_df)
 
 ##################################
 ## add annotaion for the results
@@ -439,31 +468,45 @@ print(res_df)
 ## add kegg annotation
 if args.kegg:
     keggD = read_kegg_anno(kegg_anno_file)
-    res_df["kegg_defination"] = res_df["kegg_des"].map(keggD)  
+    res_df["kegg_des"] = res_df["kegg_acc"].map(keggD)  
 
 
 ## add vog annotation
 if args.vog:
     vogD_fc, vogD_des = read_vog_anno(vog_anno_file)
-    res_df["vog_FunctionalCategory"] = res_df["vog_des"].map(vogD_fc)
-    res_df["vog_FunctionalDescription"] = res_df["vog_des"].map(vogD_des)  
-
+    res_df["vog_FunctionalCategory"] = res_df["vog_acc"].map(vogD_fc)
+    res_df["vog_FunctionalDescription"] = res_df["vog_acc"].map(vogD_des)  
 
 
 ## add phrog annotation
 if args.phrog:
     phrog_db_anno_df = pd.read_csv(phrog_db_anno,sep="\t",names=["phrog_ori","color","phrog_annot","phrog_category"])
-    phrog_db_anno_df["phrogID"] = ["phrog_%s"%i for i in phrog_db_anno_df.phrog_ori]
-    phrog_db_anno_df_sub = phrog_db_anno_df.loc[:,["phrog_annot","phrog_category","phrogID"]]
-    res_df = res_df.reset_index().merge(phrog_db_anno_df_sub,left_on="phrog_des",right_on="phrogID",how="left")
+    phrog_db_anno_df["phrog_acc"] = ["phrog_%s"%i for i in phrog_db_anno_df.phrog_ori]
+    phrog_db_anno_df_sub = phrog_db_anno_df.loc[:,["phrog_annot","phrog_category","phrog_acc"]]
+    if args.phrog_mode == "hmmsearch":
+        res_df = res_df.reset_index().merge(phrog_db_anno_df_sub,left_on="phrog_acc",right_on="phrog_acc",how="left")
+    elif args.phrog_mode  == "hhblits":
+        res_df = res_df.reset_index().merge(phrog_db_anno_df_sub,left_on="phrog_hhblits_acc",right_on="phrog_acc",how="left")
 
 ## add pdb annotation
 if args.pdb:
     pdb_db_anno_df = pd.read_csv(pdb_db_anno,sep="\t",names=["pdb_id","pdb_annot"])
     res_df = res_df.merge(pdb_db_anno_df,left_on="pdb_des",right_on="pdb_id",how="left")
 
+
 ## select coloumn to save
-res_df.to_csv(summaryFile,index=True,sep="\t")
+print(res_df.head(3))
+
+header=[
+    "index",
+    "phrog_acc","phrog_annot","phrog_category",
+    "pfam_acc", "pfam_des",
+    "kegg_acc", "kegg_des",
+    "vog_acc", "vog_FunctionalCategory","vog_FunctionalDescription",
+    ""
+]
+sorted_header = [i for i in header if i in res_df.columns]
+res_df.loc[:,sorted_header].replace("NA","").to_csv(summaryFile,index=True,sep="\t")
 
 
 if __name__ == "__main__":

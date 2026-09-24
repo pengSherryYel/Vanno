@@ -95,7 +95,7 @@ function download_phrog_hmm(){
     wget --no-check-certificate https://phrogs.lmge.uca.fr/downloads_from_website/phrog_annot_$version.tsv
     ln -fs `pwd`/all_phrogs.hmm ..
     ln -fs `pwd`/phrog_annot_$version.tsv ../phrog_annot.tsv
-    cd - && echo "PHROG done"
+    cd - && echo "PHROG HMM done"
 }
 
 function download_phrog_mmseqsdb(){
@@ -111,8 +111,26 @@ function download_phrog_mmseqsdb(){
     wget --no-check-certificate https://phrogs.lmge.uca.fr/downloads_from_website/phrog_annot_$version.tsv
     ln -fs `pwd`/phrogs_mmseqs_db/phrogs_profile_db ..
     ln -fs `pwd`/phrog_annot_$version.tsv ../phrog_annot.tsv
-    cd - && echo "PHROG done"
+    cd - && echo "PHROG MMseqsdone"
 }
+
+function download_phrog_hhsuitedb(){
+    version=${1:-'v4'}
+    db_dir=${2:-'.'}
+
+    mkdir -p $db_dir/phrog/HHsuite_$version && cd $db_dir/phrog/HHsuite_$version
+
+    ## data download
+    wget --no-check-certificate https://phrogs.lmge.uca.fr/downloads_from_website/phrogs_hhsuite_db.tar.gz
+    tar -zxvf phrogs_hhsuite_db.tar.gz && rm -f phrogs_hhsuite_db.tar.gz
+
+    wget --no-check-certificate https://phrogs.lmge.uca.fr/downloads_from_website/phrog_annot_$version.tsv
+    ln -fs `pwd`/phrogs_hhsuite_db/phrogs_hhm.ffdata ..
+    ln -fs `pwd`/phrog_annot_$version.tsv ../phrog_annot.tsv
+    cd - && echo "PHROG HHsuite done"
+}
+
+--no-check-certificate
 
 ## unfinish
 # function download_uniprot_seq(){

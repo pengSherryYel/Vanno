@@ -1,7 +1,11 @@
 
 import pandas as pd
 import os
+from collections import defaultdict
+import re
 
+## IMPORTANT: all output parser should return dict. dict format: {query_id:{target_id:import_info}}. 
+## import_info is the one I think I need to keep. it can be empty "".
 
 ######################################
 ### format hhsuit hhr into plain text
@@ -10,10 +14,14 @@ def parse_hhsuit_hhr(hhr_file, evalue_cutoff=1e-5, prob_cutoff=90):
     '''
     Only select the best, because this is for the function annotation
     '''
+
+    annoD = defaultdict(dict)
     header = [ "Query", "Target", "Probab", "E-value", "Score", "Aligned_cols", "Identities", "Similarity", "Sum_probs", "Template_Neff"]
     total_record_num = 0
     with open(hhr_file, "r" ) as f:
         resD = {}
+
+        ## parse the hhr file
         for line in f:
             line = line.strip("\x00")
             if line.startswith("Query"):
@@ -31,32 +39,44 @@ def parse_hhsuit_hhr(hhr_file, evalue_cutoff=1e-5, prob_cutoff=90):
                 tmpd["Query"]=query_sid
                 tmpd["Target"]=target_sid
 
-                print(tmpd)
+                # print(tmpd)
                 resD[total_record_num] = tmpd
                 total_record_num +=1
-                
+        
+        ## fmt hhr
         hhr_df = pd.DataFrame.from_dict(resD, orient='index')
         final_hhr_df = hhr_df.loc[:, header]
+        print("Using creteria %s and Prob %s filtering the hhblits results"%(evalue_cutoff, prob_cutoff))
+
+        ## filter hhr by e-value and prob
         final_hhr_df_filtered = final_hhr_df[(final_hhr_df['E-value'].astype(float) <= evalue_cutoff) & (final_hhr_df['Probab'].astype(float) >= prob_cutoff)]
         final_hhr_df_filtered.to_csv(hhr_file + ".filtered.tsv", sep="\t", index=False)
-        print(final_hhr_df_filtered.head(10))
+        # print(final_hhr_df_filtered.head(10))
 
-        
-        ## select the best hit
+        ## Because the some protein will have more than one protein meet creteria
+        ## then select the best hit for annotation 
         besthitD = {}
         for i in final_hhr_df_filtered.index:
             query = final_hhr_df_filtered.loc[i,"Query"]
+            Target = final_hhr_df_filtered.loc[i,"Target"]
             Probab = final_hhr_df_filtered.loc[i,"Probab"]
             if query not in besthitD:
-                besthitD[query] = [i, Probab]
+                besthitD[query] = [i, Target, Probab]
             else:
                 if Probab > besthitD[query][-1]:
-                    besthitD[query] = [i, Probab]
+                    besthitD[query] = [i, Target, Probab]
+
         besthit_index = [value[0] for key,value in besthitD.items()]        
         final_hhr_df_filtered_besthit = final_hhr_df_filtered.loc[besthit_index,:]
-        print(final_hhr_df_filtered_besthit.head(10))
+        # print(final_hhr_df_filtered_besthit.head(10))
         final_hhr_df_filtered_besthit.to_csv(hhr_file + ".filtered_besthit.tsv", sep="\t", index=False)
-    return final_hhr_df_filtered
+
+        ##format besthitD to suit for the rule. {target_id: query_id: important_info}
+        for query,values in besthitD.items():
+            bh_index, target, Probab = values
+            annoD[query][target] = Probab
+
+    return annoD
 
 
 
@@ -95,12 +115,14 @@ def parse_hmmsearch_opt(hmmsearch_opt, creteria=1e-5, reverse=False):
                     else:
                         if float(Evalue) <= float(tmp[target_name][2]):
                             tmp[target_name] = [accession,query_name,Evalue]
-        ##format tmp
-        for key,values in tmp.items():
-            accession,query_name,Evalue = values
-            annoMinD[key][accession] = query_name
 
-        #return annoD
+        ##format tmp
+        ## because pfam will have annotaion at query_name column
+        ## So this basic fmt is queryid:{targetid:import info}
+        for target,values in tmp.items():
+            accession,query_name,Evalue = values
+            annoMinD[target][query_name] = accession
+
         return annoMinD
 
 
@@ -124,3 +146,39 @@ def parse_m8_fmt_opt(m8_input, criteria=1e-5):
                     if query not in d or float(evalue) < float(d[query][-1]):
                         d[query] = [ref, evalue]
     return d
+
+
+
+######################################
+### format blast m8 into dict
+######################################
+def parse_pfam_dat(pfam_dfile):
+    store_d = {}
+    with gzip.open(pfam_dfile,"rt") as f:
+        for l in f:
+            # parse file
+            if l.strip() == "# STOCKHOLM 1.0":
+                acc_d = {}
+
+            if l.strip().startswith("#=GF"):
+                res = l.strip().strip("#=GF ").split("   ",1)
+                # print(res)
+                if len(res) == 2:
+                    category, des = res
+                else:
+                    # print(l)
+                    category, des = ["NA", "NA"]
+                    category = res[0]
+                acc_d[category] = des
+
+            if l.strip() == "//":
+
+                store_d[acc_d["AC"]] = acc_d
+
+        ## manual add two can not read：PF01846.26, PF00167.25
+        store_d["PF01846.26"]["ID"] = "FF"
+        store_d["PF00167.25"]["ID"] = "FGF"
+
+    pfam_dat_df = pd.DataFrame.from_dict(store_d, orient='index').reset_index().drop(["index"],axis=1)
+    # print(pfam_dat_df.head(10))
+    return pfam_dat_df.to_dict(orient='index')
